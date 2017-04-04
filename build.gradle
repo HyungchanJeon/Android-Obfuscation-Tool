@@ -1,0 +1,27 @@
+group 'AndroidObfuscation'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'idea'
+apply plugin: 'java'
+apply plugin: 'application'
+
+sourceCompatibility = 1.5
+
+mainClassName = 'Core.Obfuscator'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    // https://mvnrepository.com/artifact/org.jboss.forge.roaster/roaster-api
+    compile group: 'org.jboss.forge.roaster', name: 'roaster-api', version: '2.20.0.Final'
+    // https://mvnrepository.com/artifact/commons-cli/commons-cli
+    compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
+    // https://mvnrepository.com/artifact/org.jboss.forge.roaster/roaster-jdt
+    compile group: 'org.jboss.forge.roaster', name: 'roaster-jdt', version: '2.20.0.Final'
+    // https://mvnrepository.com/artifact/org.jboss/jboss-common-core
+    compile group: 'org.jboss', name: 'jboss-common-core', version: '2.5.0.Final'
+
+}

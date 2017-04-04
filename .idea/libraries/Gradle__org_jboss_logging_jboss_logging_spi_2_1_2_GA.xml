@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.jboss.logging:jboss-logging-spi:2.1.2.GA">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jboss.logging/jboss-logging-spi/2.1.2.GA/38eab4c9933f13aff8b9e713a416f1a5d665cce1/jboss-logging-spi-2.1.2.GA.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jboss.logging/jboss-logging-spi/2.1.2.GA/5ec40592c1a205b5a552dd112a4e515e67745766/jboss-logging-spi-2.1.2.GA-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

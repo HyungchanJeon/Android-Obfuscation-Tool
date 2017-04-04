@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.jboss.forge.roaster:roaster-api:2.20.0.Final">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jboss.forge.roaster/roaster-api/2.20.0.Final/76581eac04beaa54a3842bbc9b0c2fa6c046b566/roaster-api-2.20.0.Final.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jboss.forge.roaster/roaster-api/2.20.0.Final/68a88af8d2de60f863e4a82d795271f08a18678c/roaster-api-2.20.0.Final-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

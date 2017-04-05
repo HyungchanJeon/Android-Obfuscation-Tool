@@ -1,4 +1,4 @@
-package Core;
+package JavaObfuscator.FileReader;
 
 import java.io.File;
 import java.io.FilenameFilter;

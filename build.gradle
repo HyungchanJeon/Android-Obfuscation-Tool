@@ -5,9 +5,9 @@ apply plugin: 'idea'
 apply plugin: 'java'
 apply plugin: 'application'
 
-sourceCompatibility = 1.5
+sourceCompatibility = 1.8
 
-mainClassName = 'Core.Obfuscator'
+mainClassName = 'JavaObfuscator.Core.Main'
 
 repositories {
     mavenCentral()
@@ -23,5 +23,4 @@ dependencies {
     compile group: 'org.jboss.forge.roaster', name: 'roaster-jdt', version: '2.20.0.Final'
     // https://mvnrepository.com/artifact/org.jboss/jboss-common-core
     compile group: 'org.jboss', name: 'jboss-common-core', version: '2.5.0.Final'
-
 }

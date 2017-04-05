@@ -1,4 +1,4 @@
-package Core;
+package JavaObfuscator.FileReader;
 
 import java.util.List;
 

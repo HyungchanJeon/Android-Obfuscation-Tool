@@ -54,3 +54,15 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 fabric.properties
+.gradle/3.1/taskArtifacts/cache.properties
+.gradle/3.1/taskArtifacts/cache.properties.lock
+.idea/.name
+.idea/compiler.xml
+.idea/modules.xml
+.idea/modules/AndroidObfuscation.iml
+.idea/modules/AndroidObfuscation_main.iml
+.idea/modules/AndroidObfuscation_test.iml
+AndroidObfuscation.iml
+AndroidObfuscation.ipr
+build/libs/AndroidObfuscation-1.0-SNAPSHOT.jar
+src/main/java/JavaObfuscator/FileReader/ObfuscatedFile.java

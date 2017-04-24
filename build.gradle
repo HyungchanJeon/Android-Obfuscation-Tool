@@ -11,6 +11,9 @@ mainClassName = 'JavaObfuscator.Core.Main'
 
 repositories {
     mavenCentral()
+    maven {
+        url "http://dl.bintray.com/kotlin/kotlin-eap-1.1"
+    }
 }
 
 dependencies {
@@ -23,4 +26,7 @@ dependencies {
     compile group: 'org.jboss.forge.roaster', name: 'roaster-jdt', version: '2.20.0.Final'
     // https://mvnrepository.com/artifact/org.jboss/jboss-common-core
     compile group: 'org.jboss', name: 'jboss-common-core', version: '2.5.0.Final'
+
+
+    compile 'com.netflix.devinsight.rewrite:rewrite-core:0.18.4'
 }

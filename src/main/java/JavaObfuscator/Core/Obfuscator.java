@@ -23,26 +23,20 @@ public class Obfuscator implements IObfuscator {
 
     @Override
     public List<IObfuscatedFile> randomiseClassNames(List<IObfuscatedFile> obfuscatedFiles) {
-
         Stream<Tr.ClassDecl> classes = obfuscatedFiles.stream().map(f -> f.getCompilationUnit()).map(c -> c
                 .getClasses()).flatMap(Collection::stream);
 
         List<String> classNames = classes.map(c -> c.getSimpleName()).collect(Collectors.toList());
-        NameGenerator generator = new NameGenerator();
-        List<String> newClassNames = generator.getNames(classNames);
+        _nameGenerator.setClassNames(classNames);
+
+        List<String> newClassNames = _nameGenerator.getClassNames();
 
         ArrayList<Tr.CompilationUnit> refactored = new ArrayList<>();
 
         for(int i = 0; i < obfuscatedFiles.size(); i++){
             for(int j = 0; j < classNames.size(); j++){
-                obfuscatedFiles.get(i).setCompilationUnit(obfuscatedFiles.get(i).getCompilationUnit().refactor().changeType(classNames.get(j),
-                        newClassNames.get(j))
-                        .fix());
+                _fileModifier.replaceUsages(obfuscatedFiles.get(i), classNames.get(j), newClassNames.get(j));
             }
-        }
-
-        for(IObfuscatedFile obfuscatedFile : obfuscatedFiles){
-            System.out.println(obfuscatedFile.getCompilationUnit().print());
         }
 
         return obfuscatedFiles;

@@ -11,9 +11,9 @@ import java.util.List;
 public interface IObfuscatedFile {
     public Path path();
 
-    List<String> getTypeNames();
-
     void setCompilationUnit(Tr.CompilationUnit compilationUnit);
 
     Tr.CompilationUnit getCompilationUnit();
+
+    void applyChanges();
 }

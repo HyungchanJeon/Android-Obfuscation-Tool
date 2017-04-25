@@ -1,6 +1,5 @@
 package JavaObfuscator.Core;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +9,17 @@ import java.util.Random;
  * Created by Jack Barker on 5/04/2017.
  */
 public class NameGenerator implements INameGenerator {
+
+    private List<String> _originalClassNames;
+    private List<String> _newClassNames;
+
+
+    public void setClassNames(List<String> originalClassNames){
+        _originalClassNames = originalClassNames;
+        _newClassNames = getNames(originalClassNames);
+    }
+
+
 
     /**(
      * @param oldNames is a list of names that need to be replaced
@@ -44,5 +54,10 @@ public class NameGenerator implements INameGenerator {
         }
 
         return newNames;
+    }
+
+    @Override
+    public List<String> getClassNames() {
+        return _newClassNames;
     }
 }

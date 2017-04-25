@@ -7,4 +7,8 @@ import java.util.List;
  */
 public interface INameGenerator {
     List<String> getNames(List<String> oldNames);
+
+    List<String> getClassNames();
+
+    void setClassNames(List<String> originalClassNames);
 }

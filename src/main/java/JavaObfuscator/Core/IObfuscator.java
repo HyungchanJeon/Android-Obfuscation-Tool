@@ -1,7 +1,6 @@
 package JavaObfuscator.Core;
 
 import JavaObfuscator.FileReader.IObfuscatedFile;
-import org.jboss.forge.roaster.model.source.JavaSource;
 
 import java.util.List;
 

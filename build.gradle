@@ -8,6 +8,7 @@ apply plugin: 'application'
 sourceCompatibility = 1.8
 
 mainClassName = 'JavaObfuscator.Core.Main'
+def jdkHome = System.getenv("JAVA_HOME")
 
 repositories {
     mavenCentral()
@@ -17,14 +18,19 @@ repositories {
 }
 
 dependencies {
+    compile files("$jdkHome/lib/tools.jar")
+
     testCompile group: 'junit', name: 'junit', version: '4.11'
     // https://mvnrepository.com/artifact/org.jboss.forge.roaster/roaster-api
-    compile group: 'org.jboss.forge.roaster', name: 'roaster-api', version: '2.20.0.Final'
     // https://mvnrepository.com/artifact/commons-cli/commons-cli
     compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
-    // https://mvnrepository.com/artifact/org.jboss.forge.roaster/roaster-jdt
-    compile group: 'org.jboss.forge.roaster', name: 'roaster-jdt', version: '2.20.0.Final'
     // https://mvnrepository.com/artifact/org.jboss/jboss-common-core
     compile group: 'org.jboss', name: 'jboss-common-core', version: '2.5.0.Final'
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-simple
+    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.6.1'
+    // https://mvnrepository.com/artifact/com.github.javaparser/javaparser-core
+    compile group: 'com.github.javaparser', name: 'javaparser-core', version: '2.0.0'
     compile 'com.netflix.devinsight.rewrite:rewrite-core:0.18.4'
+
+
 }

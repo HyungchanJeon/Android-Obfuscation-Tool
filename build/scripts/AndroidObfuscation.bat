@@ -49,6 +49,7 @@ goto fail
 @rem Get command-line arguments, handling Windows variants
 
 if not "%OS%" == "Windows_NT" goto win9xME_args
+if "%@eval[2+2]" == "4" goto 4NT_args
 
 :win9xME_args
 @rem Slurp the command line arguments.
@@ -59,14 +60,19 @@ set _SKIP=2
 if "x%~1" == "x" goto execute
 
 set CMD_LINE_ARGS=%*
+goto execute
+
+:4NT_args
+@rem Get arguments from the 4NT Shell from JP Software
+set CMD_LINE_ARGS=%$
 
 :execute
 @rem Setup the command line
 
-set CLASSPATH=%APP_HOME%\lib\AndroidObfuscation-1.0-SNAPSHOT.jar;%APP_HOME%\lib\roaster-api-2.20.0.Final.jar;%APP_HOME%\lib\roaster-jdt-2.0.0.Final.jar;%APP_HOME%\lib\commons-cli-1.4.jar;%APP_HOME%\lib\roaster-jdt-2.20.0.Final.jar;%APP_HOME%\lib\jboss-common-core-2.5.0.Final.jar;%APP_HOME%\lib\roaster-api-2.0.0.Final.jar;%APP_HOME%\lib\org.eclipse.jdt.core-3.9.1.v20130905-0837.jar;%APP_HOME%\lib\org.eclipse.core.resources-3.7.100.jar;%APP_HOME%\lib\org.eclipse.text-3.5.101.jar;%APP_HOME%\lib\jboss-logging-spi-2.1.2.GA.jar;%APP_HOME%\lib\org.eclipse.core.runtime-3.7.0.jar;%APP_HOME%\lib\org.eclipse.equinox.common-3.6.0.jar;%APP_HOME%\lib\org.eclipse.osgi-3.7.1.jar;%APP_HOME%\lib\org.eclipse.core.jobs-3.5.100.jar;%APP_HOME%\lib\org.eclipse.equinox.preferences-3.4.1.jar;%APP_HOME%\lib\org.eclipse.core.contenttype-3.4.100.jar
+set CLASSPATH=%APP_HOME%\lib\AndroidObfuscation-1.0-SNAPSHOT.jar;%APP_HOME%\lib\commons-cli-1.4.jar;%APP_HOME%\lib\jboss-common-core-2.5.0.Final.jar;%APP_HOME%\lib\slf4j-simple-1.6.1.jar;%APP_HOME%\lib\rewrite-core-0.18.4.jar;%APP_HOME%\lib\jboss-logging-spi-2.1.2.GA.jar;%APP_HOME%\lib\annotation-detector-3.0.5.jar;%APP_HOME%\lib\commons-lang-2.6.jar;%APP_HOME%\lib\kotlin-reflect-1.1.0-beta-38.jar;%APP_HOME%\lib\koloboke-api-jdk8-1.0.0.jar;%APP_HOME%\lib\koloboke-impl-jdk8-1.0.0.jar;%APP_HOME%\lib\kotlin-stdlib-jre8-1.1.0-beta-38.jar;%APP_HOME%\lib\antlr4-4.2.2.jar;%APP_HOME%\lib\org.eclipse.jgit-4.4.1.201607150455-r.jar;%APP_HOME%\lib\kotlin-stdlib-1.1.0-beta-38.jar;%APP_HOME%\lib\koloboke-impl-common-jdk8-1.0.0.jar;%APP_HOME%\lib\kotlin-stdlib-jre7-1.1.0-beta-38.jar;%APP_HOME%\lib\antlr4-runtime-4.2.2.jar;%APP_HOME%\lib\antlr4-annotations-4.2.2.jar;%APP_HOME%\lib\antlr-runtime-3.5.2.jar;%APP_HOME%\lib\ST4-4.0.8.jar;%APP_HOME%\lib\jsch-0.1.53.jar;%APP_HOME%\lib\JavaEWAH-0.7.9.jar;%APP_HOME%\lib\httpclient-4.3.6.jar;%APP_HOME%\lib\annotations-13.0.jar;%APP_HOME%\lib\org.abego.treelayout.core-1.0.1.jar;%APP_HOME%\lib\httpcore-4.3.3.jar;%APP_HOME%\lib\commons-logging-1.1.3.jar;%APP_HOME%\lib\commons-codec-1.6.jar;%APP_HOME%\lib\slf4j-api-1.7.22.jar
 
 @rem Execute AndroidObfuscation
-"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %ANDROID_OBFUSCATION_OPTS%  -classpath "%CLASSPATH%" Core.Obfuscator %CMD_LINE_ARGS%
+"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %ANDROID_OBFUSCATION_OPTS%  -classpath "%CLASSPATH%" JavaObfuscator.Core.Main %CMD_LINE_ARGS%
 
 :end
 @rem End local scope for the variables with windows NT shell

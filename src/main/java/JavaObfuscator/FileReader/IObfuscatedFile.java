@@ -1,5 +1,7 @@
 package JavaObfuscator.FileReader;
 
+import org.jboss.forge.roaster.model.source.JavaSource;
+
 import java.util.List;
 
 /**
@@ -7,9 +9,6 @@ import java.util.List;
  */
 public interface IObfuscatedFile {
     public String path();
-    public String source();
-
-    void setSource(String source);
 
     List<String> getTypeNames();
 }

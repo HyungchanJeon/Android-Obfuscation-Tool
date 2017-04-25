@@ -3,6 +3,7 @@ package JavaObfuscator.FileReader;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaSource;
 
+import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,11 +19,18 @@ public class SourceReader implements ISourceReader {
     }
 
     public List<IObfuscatedFile> ParseSourceDirectory(String path) {
-        List<IObfuscatedFile> javaFiles = _fileRetriever.getFiles(path);
-        return javaFiles.stream().collect(Collectors.toList());
+        List<File> javaFiles = _fileRetriever.getFiles(path);
+
+        List<IObfuscatedFile> obfuscatedFiles =  javaFiles.stream().map(i -> {
+            IObfuscatedFile file = new ObfuscatedType(i);
+            file.setJavaSource(parseSource(file));
+            return file;
+        }).collect(Collectors.toList());
+
+        return obfuscatedFiles.stream().collect(Collectors.toList());
     }
 
     private JavaSource parseSource(IObfuscatedFile file) {
-        return Roaster.parse(JavaSource.class, file.source());
+        return Roaster.parse(JavaSource.class, file.stringSource());
     }
 }

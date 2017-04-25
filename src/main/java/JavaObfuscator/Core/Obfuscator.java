@@ -1,6 +1,7 @@
 package JavaObfuscator.Core;
 
 import JavaObfuscator.FileReader.IObfuscatedFile;
+import JavaObfuscator.FileReader.ISourceReader;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,10 +15,12 @@ public class Obfuscator implements IObfuscator {
     private IFileModifier _fileModifier;
 
     public Obfuscator(INameGenerator nameGenerator, IFileModifier fileModifier){
-
         _nameGenerator = nameGenerator;
         _fileModifier = fileModifier;
     }
+
+
+
     @Override
     public List<IObfuscatedFile> randomiseClassNames(List<IObfuscatedFile> obfuscatedFiles) {
 

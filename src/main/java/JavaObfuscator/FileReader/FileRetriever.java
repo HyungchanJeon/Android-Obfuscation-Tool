@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
  * Created by Jack Barker on 5/04/2017.
  */
 public class FileRetriever implements IFileRetriever {
-    public List<IObfuscatedFile> getFiles(String path) {
+    public List<File> getFiles(String path) {
         File dir = new File(path);
 
         List<File> fileList = Arrays.asList(dir.listFiles(new FilenameFilter() {
@@ -22,6 +22,6 @@ public class FileRetriever implements IFileRetriever {
             }
         }));
 
-        return fileList.stream().map(i -> new ObfuscatedFile(i)).collect(Collectors.toList());
+        return fileList;
     }
 }

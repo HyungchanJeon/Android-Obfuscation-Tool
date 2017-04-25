@@ -66,3 +66,4 @@ AndroidObfuscation.iml
 AndroidObfuscation.ipr
 build/libs/AndroidObfuscation-1.0-SNAPSHOT.jar
 src/main/java/JavaObfuscator/FileReader/ObfuscatedFile.java
+*.class

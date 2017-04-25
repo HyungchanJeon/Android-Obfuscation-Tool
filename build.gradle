@@ -11,6 +11,9 @@ mainClassName = 'JavaObfuscator.Core.Main'
 
 repositories {
     mavenCentral()
+    maven {
+        url "http://dl.bintray.com/kotlin/kotlin-eap-1.1"
+    }
 }
 
 dependencies {

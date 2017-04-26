@@ -25,7 +25,7 @@ public class FileModifier implements IFileModifier {
 
     private void changeExtendedClassTypes(IObfuscatedFile file, String oldTypeName, String newTypeName) {
         file.getCompilationUnit().getNodesByType(ClassOrInterfaceDeclaration.class)
-                .stream().forEach(node -> changeTypeOfInterface(node, oldTypeName, newTypeName));
+                .stream().forEach(node -> changeTypeOfExtendedClass(node, oldTypeName, newTypeName));
     }
 
 

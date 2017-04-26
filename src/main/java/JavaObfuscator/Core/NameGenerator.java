@@ -12,17 +12,31 @@ import java.util.Random;
 public class NameGenerator implements INameGenerator {
 
     private HashMap<String, String> _classNames = new HashMap<>();
-
+    private List<String> _originalClassList;
 
     public String getClassName(String oldName){
+
+        if (!_originalClassList.contains(oldName)) {
+            return oldName;
+        }
+
         if(_classNames.containsKey(oldName)){
             return _classNames.get(oldName);
+        }
+
+        if(_classNames.containsValue(oldName)){
+            return oldName;
         }
 
         String newName = generateName();
         _classNames.put(oldName, newName);
 
         return newName;
+    }
+
+    @Override
+    public void setClassNames(List<String> classNames) {
+        _originalClassList = classNames;
     }
 
     private String generateName(){

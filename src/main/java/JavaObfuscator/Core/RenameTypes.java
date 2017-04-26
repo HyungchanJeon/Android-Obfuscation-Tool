@@ -11,6 +11,7 @@ import com.github.javaparser.ast.type.ClassOrInterfaceType;
  */
 public class RenameTypes implements IFileModifier {
     INameGenerator _nameGenerator;
+
     @Override
     public void rename(IObfuscatedFile file, INameGenerator nameGenerator) {
         _nameGenerator = nameGenerator;
@@ -30,7 +31,7 @@ public class RenameTypes implements IFileModifier {
         Class c = n.getClass();
         if(c.getSimpleName().equals("VariableDeclarator")){
             VariableDeclarator variable = (VariableDeclarator)(n);
-            String newTypeName = _nameGenerator.getClassName(variable.getName().toString());
+            String newTypeName = _nameGenerator.getClassName(variable.getType().toString());
             variable.setType(newTypeName);
         }
     }
@@ -39,7 +40,7 @@ public class RenameTypes implements IFileModifier {
         Class c = n.getClass();
         if(c.getSimpleName().equals("MethodDeclaration")){
             MethodDeclaration method = (MethodDeclaration)(n);
-            String newTypeName = _nameGenerator.getClassName(method.getName().toString());
+            String newTypeName = _nameGenerator.getClassName(method.getType().toString());
             method.setType(newTypeName);
 
         }

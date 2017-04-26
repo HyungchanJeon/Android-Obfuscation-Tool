@@ -12,7 +12,7 @@ import com.github.javaparser.ast.type.ClassOrInterfaceType;
 public class RenameVariables implements IFileModifier {
 
     @Override
-    public void rename(IObfuscatedFile iObfuscatedFile, INameGenerator nameGenerator) {
+    public void applyChanges(IObfuscatedFile iObfuscatedFile, INameGenerator nameGenerator) {
 
     }
 }

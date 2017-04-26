@@ -8,5 +8,5 @@ import java.util.List;
  * Created by Jack Barker on 5/04/2017.
  */
 public interface IFileModifier {
-    void rename(IObfuscatedFile iObfuscatedFile, INameGenerator nameGenerator);
+    void applyChanges(IObfuscatedFile iObfuscatedFile, INameGenerator nameGenerator);
 }

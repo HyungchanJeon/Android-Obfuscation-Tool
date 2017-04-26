@@ -13,7 +13,7 @@ public class RenameTypes implements IFileModifier {
     INameGenerator _nameGenerator;
 
     @Override
-    public void rename(IObfuscatedFile file, INameGenerator nameGenerator) {
+    public void applyChanges(IObfuscatedFile file, INameGenerator nameGenerator) {
         _nameGenerator = nameGenerator;
         recurseAllNodes(file.getCompilationUnit(), file);
     }

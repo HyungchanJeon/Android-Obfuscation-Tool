@@ -1,13 +1,18 @@
 package JavaObfuscator.Core;
 
 import JavaObfuscator.FileReader.IObfuscatedFile;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
-import com.github.javaparser.ast.body.BodyDeclaration;
-import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.body.TypeDeclaration;
+import com.github.javaparser.ast.body.*;
+import com.github.javaparser.ast.expr.SimpleName;
+import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.github.javaparser.ast.type.Type;
+import com.sun.org.apache.xpath.internal.operations.Variable;
 
+import javax.lang.model.element.VariableElement;
+import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -17,56 +22,45 @@ import java.util.stream.Collectors;
 public class FileModifier implements IFileModifier {
     @Override
     public void replaceUsages(IObfuscatedFile file, String oldTypeName, String newTypeName) {
-        changeInterfaceAndClassTypes(file, oldTypeName, newTypeName);
-        changeMethodReturnTypes(file, oldTypeName, newTypeName);
-        changeImplementedInterfaceTypes(file, oldTypeName, newTypeName);
-        changeExtendedClassTypes(file, oldTypeName, newTypeName);
+        /*
+        changeImplementedInterfaceTypes(file.getCompilationUnit(), oldTypeName, newTypeName);
+        changeExtendedClassTypes(file.getCompilationUnit(), oldTypeName, newTypeName);
+        changeVariableTypes(file.getCompilationUnit(), oldTypeName, newTypeName);
+        changeInMethod(file.getCompilationUnit(), oldTypeName, newTypeName);*/
+
+        recurseAllNodes(file.getCompilationUnit(), oldTypeName, newTypeName);
     }
 
-    private void changeExtendedClassTypes(IObfuscatedFile file, String oldTypeName, String newTypeName) {
-        file.getCompilationUnit().getNodesByType(ClassOrInterfaceDeclaration.class)
-                .stream().forEach(node -> changeTypeOfExtendedClass(node, oldTypeName, newTypeName));
-    }
+    private void recurseAllNodes(Node n, String oldTypeName, String newTypeName){
+        Class c = n.getClass();
 
-
-    private void changeImplementedInterfaceTypes(IObfuscatedFile file, String oldTypeName, String newTypeName) {
-        file.getCompilationUnit().getNodesByType(ClassOrInterfaceDeclaration.class)
-                .stream().forEach(node -> changeTypeOfInterface(node, oldTypeName, newTypeName));
-    }
-
-    private void changeMethodReturnTypes(IObfuscatedFile file, String oldTypeName, String newTypeName) {
-        NodeList<TypeDeclaration<?>> types = file.getCompilationUnit().getTypes();
-        for (TypeDeclaration<?> type : types) {
-            // Go through all fields, methods, etc. in this type
-            NodeList<BodyDeclaration<?>> members = type.getMembers();
-            for (BodyDeclaration<?> member : members) {
-                if (member instanceof MethodDeclaration) {
-                    MethodDeclaration method = (MethodDeclaration) member;
-                    if(method.getType().toString().equals(oldTypeName))
-                        method.setType(newTypeName);
-                }
-            }
-        }
-    }
-
-    private void changeInterfaceAndClassTypes(IObfuscatedFile file, String oldTypeName, String newTypeName) {
-        file.getCompilationUnit().getNodesByType(ClassOrInterfaceDeclaration.class).stream()
-                .filter(c -> c.getNameAsString().equals(oldTypeName)).forEach(c -> c.getName().setIdentifier(newTypeName));
-    }
-
-    private void changeTypeOfInterface(ClassOrInterfaceDeclaration node, String oldTypeName, String newTypeName) {
-        for(ClassOrInterfaceType type : node.getImplementedTypes()){
+        if(c.getSimpleName().equals("ClassOrInterfaceDeclaration")){
+            ClassOrInterfaceDeclaration type = (ClassOrInterfaceDeclaration)(n);
             if(type.getName().toString().equals(oldTypeName)){
                 type.getName().setIdentifier(newTypeName);
             }
         }
-    }
 
-    private void changeTypeOfExtendedClass(ClassOrInterfaceDeclaration node, String oldTypeName, String newTypeName) {
-        for(ClassOrInterfaceType type : node.getExtendedTypes()){
+        if(c.getSimpleName().equals("ClassOrInterfaceType")){
+            ClassOrInterfaceType type = (ClassOrInterfaceType)(n);
             if(type.getName().toString().equals(oldTypeName)){
                 type.getName().setIdentifier(newTypeName);
             }
         }
+
+        if(c.getSimpleName().equals("MethodDeclaration")){
+            MethodDeclaration method = (MethodDeclaration)(n);
+            if(method.getType().toString().equals(oldTypeName))
+                method.setType(newTypeName);
+        }
+
+        if(c.getSimpleName().equals("VariableDeclarator")){
+            VariableDeclarator variable = (VariableDeclarator)(n);
+            if(variable.getType().toString().equals(oldTypeName))
+                variable.setType(newTypeName);
+        }
+
+        n.getChildNodes().stream().forEach(node -> recurseAllNodes(node, oldTypeName, newTypeName));
     }
+
 }

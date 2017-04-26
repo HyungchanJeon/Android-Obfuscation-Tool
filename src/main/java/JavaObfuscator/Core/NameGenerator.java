@@ -15,7 +15,6 @@ public class NameGenerator implements INameGenerator {
     private List<String> _originalClassList;
 
     public String getClassName(String oldName){
-
         if (!_originalClassList.contains(oldName)) {
             return oldName;
         }

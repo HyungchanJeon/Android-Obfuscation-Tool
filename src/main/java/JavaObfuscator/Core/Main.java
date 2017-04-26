@@ -4,10 +4,8 @@
 package JavaObfuscator.Core;
 
 import JavaObfuscator.FileReader.*;
-import com.netflix.rewrite.ast.Tr;
-import com.netflix.rewrite.parse.OracleJdkParser;
-import com.netflix.rewrite.parse.Parser;
-import com.netflix.rewrite.refactor.Refactor;
+
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,7 +14,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Main {
-    public static void main(String[] args){
+    public static void main(String[] args) throws IOException {
         IFileRetriever fileRetriever = new FileRetriever();
         ISourceReader reader = new SourceReader(fileRetriever);
         List<IObfuscatedFile> obfuscatedFiles = reader.ParseSourceDirectory("C:\\tmp");
@@ -32,7 +30,6 @@ public class Main {
         for(IObfuscatedFile obfuscatedFile : obfuscatedFiles){
             obfuscatedFile.applyChanges();
         }
-
     }
 }
 

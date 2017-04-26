@@ -1,7 +1,6 @@
 package JavaObfuscator.FileReader;
 
-import com.netflix.rewrite.ast.Tr;
-import org.eclipse.jgit.util.FileUtils;
+import com.github.javaparser.ast.CompilationUnit;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -22,12 +21,13 @@ public class ObfuscatedType implements IObfuscatedFile {
     private File _baseFile;
 
     private String _fileName;
-    private Tr.CompilationUnit _compilationUnit;
+    private CompilationUnit _compilationUnit;
 
     public ObfuscatedType(File baseFile){
 
         _baseFile = baseFile;
         _fileName = baseFile.getName();
+
     }
 
     public Path path() {
@@ -36,12 +36,12 @@ public class ObfuscatedType implements IObfuscatedFile {
 
 
     @Override
-    public void setCompilationUnit(Tr.CompilationUnit compilationUnit) {
+    public void setCompilationUnit(CompilationUnit compilationUnit) {
         _compilationUnit = compilationUnit;
     }
 
     @Override
-    public Tr.CompilationUnit getCompilationUnit() {
+    public CompilationUnit getCompilationUnit() {
         return _compilationUnit;
     }
 
@@ -55,7 +55,7 @@ public class ObfuscatedType implements IObfuscatedFile {
         }
 
         try(  PrintWriter out = new PrintWriter( path.toString() +  "\\" + _fileName)  ){
-            out.println(  _compilationUnit.print() );
+            out.println(  _compilationUnit.toString() );
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

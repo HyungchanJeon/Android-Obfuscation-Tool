@@ -1,6 +1,6 @@
 package JavaObfuscator.FileReader;
 
-import com.netflix.rewrite.ast.Tr;
+import com.github.javaparser.ast.CompilationUnit;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -11,9 +11,9 @@ import java.util.List;
 public interface IObfuscatedFile {
     public Path path();
 
-    void setCompilationUnit(Tr.CompilationUnit compilationUnit);
+    void setCompilationUnit(CompilationUnit compilationUnit);
 
-    Tr.CompilationUnit getCompilationUnit();
+    CompilationUnit getCompilationUnit();
 
     void applyChanges();
 }

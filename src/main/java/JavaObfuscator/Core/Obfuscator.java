@@ -1,7 +1,8 @@
 package JavaObfuscator.Core;
 
 import JavaObfuscator.FileReader.IObfuscatedFile;
-import com.netflix.rewrite.ast.Tr;
+import com.github.javaparser.ast.body.TypeDeclaration;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -23,15 +24,14 @@ public class Obfuscator implements IObfuscator {
 
     @Override
     public List<IObfuscatedFile> randomiseClassNames(List<IObfuscatedFile> obfuscatedFiles) {
-        Stream<Tr.ClassDecl> classes = obfuscatedFiles.stream().map(f -> f.getCompilationUnit()).map(c -> c
-                .getClasses()).flatMap(Collection::stream);
+        Stream<TypeDeclaration<?>> classes = obfuscatedFiles.stream().map(f -> f.getCompilationUnit()).map(c -> c.getTypes()).flatMap
+                (Collection::stream);
 
-        List<String> classNames = classes.map(c -> c.getSimpleName()).collect(Collectors.toList());
+        List<String> classNames = classes.map(c -> c.getName().toString()).collect(Collectors.toList());
         _nameGenerator.setClassNames(classNames);
 
         List<String> newClassNames = _nameGenerator.getClassNames();
 
-        ArrayList<Tr.CompilationUnit> refactored = new ArrayList<>();
 
         for(int i = 0; i < obfuscatedFiles.size(); i++){
             for(int j = 0; j < classNames.size(); j++){

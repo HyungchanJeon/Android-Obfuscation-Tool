@@ -9,6 +9,4 @@ import java.util.List;
  */
 public interface IFileModifier {
     void replaceUsages(IObfuscatedFile file, String oldTypeName, String newTypeName);
-
-    void changeTypeNamesRaw(IObfuscatedFile file, String oldTypeName, String newTypeName);
 }

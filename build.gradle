@@ -29,8 +29,8 @@ dependencies {
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-simple
     compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.6.1'
     // https://mvnrepository.com/artifact/com.github.javaparser/javaparser-core
-    compile group: 'com.github.javaparser', name: 'javaparser-core', version: '2.0.0'
-    compile 'com.netflix.devinsight.rewrite:rewrite-core:0.18.4'
-
+    //compile group: 'com.github.javaparser', name: 'javaparser-core', version: '2.0.0'
+    //compile 'com.netflix.devinsight.rewrite:rewrite-core:0.18.4'
+    compile 'com.github.javaparser:javaparser-core:3.0.1'
 
 }

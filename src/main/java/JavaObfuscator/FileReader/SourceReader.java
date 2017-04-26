@@ -1,10 +1,10 @@
 package JavaObfuscator.FileReader;
 
-import com.netflix.rewrite.ast.Tr;
-import com.netflix.rewrite.parse.OracleJdkParser;
-import com.netflix.rewrite.parse.Parser;
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ast.CompilationUnit;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
@@ -22,7 +22,7 @@ public class SourceReader implements ISourceReader {
         _fileRetriever = fileRetriever;
     }
 
-    public List<IObfuscatedFile> ParseSourceDirectory(String path) {
+    public List<IObfuscatedFile> ParseSourceDirectory(String path) throws IOException {
 
         List<File> javaFiles = _fileRetriever.getFiles(path);
 
@@ -31,9 +31,16 @@ public class SourceReader implements ISourceReader {
             return file;
         }).collect(Collectors.toList());
 
-        Parser parser = new OracleJdkParser();
+
         List<Path> paths = obfuscatedFiles.stream().map(file -> file.path()).collect(Collectors.toList());
-        List<Tr.CompilationUnit>  compilationUnits = parser.parse(paths);
+
+        List<CompilationUnit> compilationUnits = paths.stream().map(tmpPath -> {
+            try {
+                return JavaParser.parse(tmpPath);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }).collect(Collectors.toList());
 
         for(int i = 0; i < obfuscatedFiles.size(); i++){
             obfuscatedFiles.get(i).setCompilationUnit(compilationUnits.get(i));

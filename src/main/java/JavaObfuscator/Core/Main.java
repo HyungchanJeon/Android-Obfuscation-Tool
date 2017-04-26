@@ -6,12 +6,7 @@ package JavaObfuscator.Core;
 import JavaObfuscator.FileReader.*;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -20,7 +15,7 @@ public class Main {
         List<IObfuscatedFile> obfuscatedFiles = reader.ParseSourceDirectory("C:\\tmp");
 
         NameGenerator nameGenerator = new NameGenerator();
-        Obfuscator obfuscator = new Obfuscator(nameGenerator, new FileModifier());
+        Obfuscator obfuscator = new Obfuscator(nameGenerator, new RenameTypes());
         obfuscatedFiles = obfuscator.randomiseClassNames(obfuscatedFiles);
 
         //Raw obfuscator is used when the AST is no longer in use, used for editing the raw text

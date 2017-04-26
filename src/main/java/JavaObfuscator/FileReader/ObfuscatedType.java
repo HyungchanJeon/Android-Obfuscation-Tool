@@ -62,6 +62,16 @@ public class ObfuscatedType implements IObfuscatedFile {
     }
 
     @Override
+    public String getFileName() {
+        return _fileName;
+    }
+
+    @Override
+    public void setFileName(String s) {
+        _fileName = s;
+    }
+
+    @Override
     public String toString(){
         try {
             return new String(Files.readAllBytes(Paths.get(_baseFile.getAbsolutePath())));

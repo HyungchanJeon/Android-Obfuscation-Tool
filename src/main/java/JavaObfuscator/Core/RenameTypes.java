@@ -1,19 +1,9 @@
 package JavaObfuscator.Core;
 
 import JavaObfuscator.FileReader.IObfuscatedFile;
-import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.*;
-import com.github.javaparser.ast.expr.SimpleName;
-import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
-import com.github.javaparser.ast.type.Type;
-import com.sun.org.apache.xpath.internal.operations.Variable;
-
-import javax.lang.model.element.VariableElement;
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 /**
@@ -22,6 +12,9 @@ import java.util.stream.Collectors;
 public class RenameTypes implements IFileModifier {
     @Override
     public void replaceUsages(IObfuscatedFile file, String oldTypeName, String newTypeName) {
+        if(file.getFileName().equals(oldTypeName + ".java")){
+            file.setFileName(newTypeName + ".java");
+        }
         recurseAllNodes(file.getCompilationUnit(), oldTypeName, newTypeName);
     }
 
@@ -73,5 +66,4 @@ public class RenameTypes implements IFileModifier {
             }
         }
     }
-
 }

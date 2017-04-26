@@ -16,4 +16,8 @@ public interface IObfuscatedFile {
     CompilationUnit getCompilationUnit();
 
     void applyChanges();
+
+    String getFileName();
+
+    void setFileName(String s);
 }

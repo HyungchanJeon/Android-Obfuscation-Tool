@@ -9,4 +9,5 @@ import java.util.List;
  */
 public interface IObfuscator {
     List<IObfuscatedFile> randomiseClassNames(List<IObfuscatedFile> javaSources);
+    List<IObfuscatedFile> randomiseVariableNames(List<IObfuscatedFile> javaSources);
 }

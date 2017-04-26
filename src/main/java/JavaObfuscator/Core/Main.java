@@ -15,12 +15,9 @@ public class Main {
         List<IObfuscatedFile> obfuscatedFiles = reader.ParseSourceDirectory("C:\\tmp");
 
         NameGenerator nameGenerator = new NameGenerator();
-        Obfuscator obfuscator = new Obfuscator(nameGenerator, new RenameTypes());
+        Obfuscator obfuscator = new Obfuscator(nameGenerator, new RenameTypes(), new RenameVariables());
         obfuscatedFiles = obfuscator.randomiseClassNames(obfuscatedFiles);
 
-        //Raw obfuscator is used when the AST is no longer in use, used for editing the raw text
-        RawObfuscator rawObfuscator = new RawObfuscator(nameGenerator);
-        obfuscatedFiles = rawObfuscator.changeTypeNames(obfuscatedFiles);
 
         for(IObfuscatedFile obfuscatedFile : obfuscatedFiles){
             obfuscatedFile.applyChanges();

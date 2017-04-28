@@ -9,4 +9,6 @@ public interface INameGenerator {
     String getClassName(String oldTypeName);
 
     void setClassNames(List<String> classNames);
+
+    String generateDistinct();
 }

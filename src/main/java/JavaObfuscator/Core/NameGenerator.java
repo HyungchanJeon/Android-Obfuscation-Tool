@@ -13,6 +13,12 @@ public class NameGenerator implements INameGenerator {
 
     private HashMap<String, String> _classNames = new HashMap<>();
     private List<String> _originalClassList;
+    private List<String> _distinctNames = new ArrayList<>();
+    public String generateDistinct(){
+        String name = generateName();
+        _distinctNames.add(name);
+        return name;
+    }
 
     public String getClassName(String oldName){
         if (!_originalClassList.contains(oldName)) {
@@ -53,7 +59,7 @@ public class NameGenerator implements INameGenerator {
                 sb.append(letter);
             }
             newName = sb.toString();
-            if(!_classNames.containsKey(newName) && !_classNames.containsValue(newName)){
+            if(!_classNames.containsKey(newName) && !_classNames.containsValue(newName) && !_distinctNames.contains(newName)){
                 nameFound = true;
             }
         }

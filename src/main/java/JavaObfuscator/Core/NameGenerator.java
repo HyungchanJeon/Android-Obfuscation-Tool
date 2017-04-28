@@ -12,15 +12,12 @@ import java.util.Random;
 public class NameGenerator implements INameGenerator {
 
     private HashMap<String, String> _classNames = new HashMap<>();
+    private HashMap<String, String> _methodNames = new HashMap<>();
+    private HashMap<String, String> _variablesNames = new HashMap<>();
     private List<String> _originalClassList;
-    private List<String> _distinctNames = new ArrayList<>();
-    public String generateDistinct(){
-        String name = generateName();
-        _distinctNames.add(name);
-        return name;
-    }
 
     public String getClassName(String oldName){
+
         if (!_originalClassList.contains(oldName)) {
             return oldName;
         }
@@ -39,6 +36,43 @@ public class NameGenerator implements INameGenerator {
         return newName;
     }
 
+    public String getMethodName(String oldName){
+
+        if(_classNames.containsKey(oldName)){
+            return _classNames.get(oldName);
+        }
+
+        if(_methodNames.containsKey(oldName)){
+            return _methodNames.get(oldName);
+        }
+
+        String newName = generateName();
+        _methodNames.put(oldName, newName);
+
+        return newName;
+    }
+
+    public void setMethodName(String oldName){
+
+        if(_methodNames.containsKey(oldName)){
+            return;
+        }
+
+        _methodNames.put(oldName, oldName);
+    }
+
+    public String getVariableName(String oldName){
+
+        if(_variablesNames.containsKey(oldName)){
+            return _variablesNames.get(oldName);
+        }
+
+        String newName = generateName();
+        _variablesNames.put(oldName, newName);
+
+        return newName;
+    }
+
     @Override
     public void setClassNames(List<String> classNames) {
         _originalClassList = classNames;
@@ -51,7 +85,6 @@ public class NameGenerator implements INameGenerator {
 
         while(!nameFound) {
             int length = 4 + random.nextInt(10);
-            System.out.println(length);
             StringBuffer sb = new StringBuffer();
             for (int i = 0; i < length; i++) {
                 int letterIndex = random.nextInt(26);
@@ -59,7 +92,7 @@ public class NameGenerator implements INameGenerator {
                 sb.append(letter);
             }
             newName = sb.toString();
-            if(!_classNames.containsKey(newName) && !_classNames.containsValue(newName) && !_distinctNames.contains(newName)){
+            if(!_classNames.containsKey(newName) && !_classNames.containsValue(newName)){
                 nameFound = true;
             }
         }

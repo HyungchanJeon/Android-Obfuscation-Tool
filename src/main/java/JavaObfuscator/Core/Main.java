@@ -12,19 +12,13 @@ public class Main {
     public static void main(String[] args) throws IOException {
         IFileRetriever fileRetriever = new FileRetriever();
         ISourceReader reader = new SourceReader(fileRetriever);
-        List<IObfuscatedFile> obfuscatedFiles = reader.ParseSourceDirectory("C:\\tmp");
+        List<IObfuscatedFile> obfuscatedFiles = reader.ParseSourceDirectory("C:\\workspace\\702A1-master\\app\\src\\main\\java\\com\\example\\a702app\\passworddiary");
 
         NameGenerator nameGenerator = new NameGenerator();
-
-        Obfuscator obfuscator = new Obfuscator(
-                nameGenerator,
-                new RenameTypes(nameGenerator),
-                new RenameVariables(nameGenerator),
-                new WhileReplacer(nameGenerator, new StatementGenerator()));
-
-        //obfuscatedFiles = obfuscator.randomiseClassNames(obfuscatedFiles);
-
-        obfuscatedFiles = obfuscator.replaceWhilesWithSwitches(obfuscatedFiles);
+        Obfuscator obfuscator = new Obfuscator(nameGenerator, new RenameTypes(), new RenameVariables(), new RenameMethods());
+        obfuscatedFiles = obfuscator.randomiseClassNames(obfuscatedFiles);
+        obfuscatedFiles = obfuscator.randomiseMethodNames(obfuscatedFiles);
+        obfuscatedFiles = obfuscator.randomiseVariableNames(obfuscatedFiles);
 
         for(IObfuscatedFile obfuscatedFile : obfuscatedFiles){
             obfuscatedFile.applyChanges();

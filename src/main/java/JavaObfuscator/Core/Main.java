@@ -15,9 +15,14 @@ public class Main {
         List<IObfuscatedFile> obfuscatedFiles = reader.ParseSourceDirectory("C:\\tmp");
 
         NameGenerator nameGenerator = new NameGenerator();
-        Obfuscator obfuscator = new Obfuscator(nameGenerator, new RenameTypes(), new RenameVariables());
-        obfuscatedFiles = obfuscator.randomiseClassNames(obfuscatedFiles);
+        Obfuscator obfuscator = new Obfuscator(
+                nameGenerator,
+                new RenameTypes(nameGenerator),
+                new RenameVariables(nameGenerator),
+                new WhileReplacer(nameGenerator, new StatementGenerator()));
+        //obfuscatedFiles = obfuscator.randomiseClassNames(obfuscatedFiles);
 
+        obfuscatedFiles = obfuscator.replaceWhilesWithSwitches(obfuscatedFiles);
 
         for(IObfuscatedFile obfuscatedFile : obfuscatedFiles){
             obfuscatedFile.applyChanges();

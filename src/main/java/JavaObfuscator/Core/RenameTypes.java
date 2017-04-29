@@ -12,9 +12,12 @@ import com.github.javaparser.ast.type.ClassOrInterfaceType;
 public class RenameTypes implements IFileModifier {
     INameGenerator _nameGenerator;
 
-    @Override
-    public void rename(IObfuscatedFile file, INameGenerator nameGenerator) {
+    public RenameTypes(INameGenerator nameGenerator){
         _nameGenerator = nameGenerator;
+    }
+
+    @Override
+    public void applyChanges(IObfuscatedFile file) {
         recurseAllNodes(file.getCompilationUnit(), file);
     }
 

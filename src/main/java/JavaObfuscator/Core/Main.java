@@ -20,11 +20,17 @@ public class Main {
                 nameGenerator,
                 new RenameTypes(nameGenerator),
                 new RenameVariables(nameGenerator),
-                new WhileReplacer(nameGenerator, new StatementGenerator()));
+                new GenericStatementReplacer(nameGenerator, new StatementGenerator()));
 
         //obfuscatedFiles = obfuscator.randomiseClassNames(obfuscatedFiles);
 
-        obfuscatedFiles = obfuscator.replaceWhilesWithSwitches(obfuscatedFiles);
+
+
+        //
+
+        //obfuscatedFiles = obfuscator.replaceWhilesWithSwitches(obfuscatedFiles);
+
+        obfuscatedFiles = obfuscator.flattenEntireProject(obfuscatedFiles);
 
         for(IObfuscatedFile obfuscatedFile : obfuscatedFiles){
             obfuscatedFile.applyChanges();

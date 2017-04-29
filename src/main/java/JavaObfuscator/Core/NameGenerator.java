@@ -51,7 +51,6 @@ public class NameGenerator implements INameGenerator {
 
         while(!nameFound) {
             int length = 4 + random.nextInt(10);
-            System.out.println(length);
             StringBuffer sb = new StringBuffer();
             for (int i = 0; i < length; i++) {
                 int letterIndex = random.nextInt(26);

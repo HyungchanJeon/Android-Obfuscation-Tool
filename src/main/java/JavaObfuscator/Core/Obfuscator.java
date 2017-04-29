@@ -16,13 +16,13 @@ public class Obfuscator implements IObfuscator {
     private INameGenerator _nameGenerator;
     private IFileModifier _renameTypes;
     private IFileModifier _renameVariables;
-    private IFileModifier _whileReplacer;
+    private IFileModifier _genericStatementReplacer;
 
-    public Obfuscator(INameGenerator nameGenerator, IFileModifier renameTypes, IFileModifier renameVariables, IFileModifier whileReplacer){
+    public Obfuscator(INameGenerator nameGenerator, IFileModifier renameTypes, IFileModifier renameVariables, IFileModifier genericStatementReplacer){
         _nameGenerator = nameGenerator;
         _renameTypes = renameTypes;
         _renameVariables = renameVariables;
-        _whileReplacer = whileReplacer;
+        _genericStatementReplacer = genericStatementReplacer;
     }
 
     @Override
@@ -50,11 +50,14 @@ public class Obfuscator implements IObfuscator {
         return obfuscatedFiles;
     }
 
-    @Override
-    public List<IObfuscatedFile> replaceWhilesWithSwitches(List<IObfuscatedFile> obfuscatedFiles) {
+    public List<IObfuscatedFile> flattenEntireProject(List<IObfuscatedFile> obfuscatedFiles) {
+        final Integer s;
 
-        for(int i = 0; i < obfuscatedFiles.size(); i++){
-            _whileReplacer.applyChanges(obfuscatedFiles.get(i));
+        for(int j = 0; j < 2; j++) {
+            System.out.println(j);
+            for (int i = 0; i < obfuscatedFiles.size(); i++) {
+                _genericStatementReplacer.applyChanges(obfuscatedFiles.get(i));
+            }
         }
 
         return obfuscatedFiles;

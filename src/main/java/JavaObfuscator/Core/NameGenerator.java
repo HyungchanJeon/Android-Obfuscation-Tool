@@ -12,6 +12,8 @@ import java.util.Random;
 public class NameGenerator implements INameGenerator {
 
     private HashMap<String, String> _classNames = new HashMap<>();
+    private HashMap<String, String> _methodNames = new HashMap<>();
+    private HashMap<String, String> _variablesNames = new HashMap<>();
     private List<String> _originalClassList;
     private List<String> _distinctNames = new ArrayList<>();
     public String generateDistinct(){
@@ -42,6 +44,43 @@ public class NameGenerator implements INameGenerator {
     @Override
     public void setClassNames(List<String> classNames) {
         _originalClassList = classNames;
+    }
+    
+    public String getMethodName(String oldName){
+
+        if(_classNames.containsKey(oldName)){
+            return _classNames.get(oldName);
+        }
+
+        if(_methodNames.containsKey(oldName)){
+            return _methodNames.get(oldName);
+        }
+
+        String newName = generateName();
+        _methodNames.put(oldName, newName);
+
+        return newName;
+    }
+
+    public void setMethodName(String oldName){
+
+        if(_methodNames.containsKey(oldName)){
+            return;
+        }
+
+        _methodNames.put(oldName, oldName);
+    }
+
+    public String getVariableName(String oldName){
+
+        if(_variablesNames.containsKey(oldName)){
+            return _variablesNames.get(oldName);
+        }
+
+        String newName = generateName();
+        _variablesNames.put(oldName, newName);
+
+        return newName;
     }
 
     private String generateName(){

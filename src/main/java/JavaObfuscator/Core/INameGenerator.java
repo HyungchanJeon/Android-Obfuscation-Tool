@@ -7,8 +7,11 @@ import java.util.List;
  */
 public interface INameGenerator {
     String getClassName(String oldTypeName);
+    String getVariableName(String oldTypeName);
+    String getMethodName(String oldTypeName);
 
     void setClassNames(List<String> classNames);
-
+    void setMethodName(String methodName);
+    
     String generateDistinct();
 }

@@ -19,15 +19,13 @@ public class Main {
         Obfuscator obfuscator = new Obfuscator(
                 nameGenerator,
                 new RenameTypes(nameGenerator),
+                new RenameMethods(nameGenerator),
                 new RenameVariables(nameGenerator),
                 new GenericStatementReplacer(nameGenerator, new StatementGenerator()));
 
-        //obfuscatedFiles = obfuscator.randomiseClassNames(obfuscatedFiles);
-
-
-
-        //
-
+        obfuscatedFiles = obfuscator.randomiseClassNames(obfuscatedFiles);
+        obfuscatedFiles = obfuscator.randomiseMethodNames(obfuscatedFiles);
+        obfuscatedFiles = obfuscator.randomiseVariableNames(obfuscatedFiles);
         //obfuscatedFiles = obfuscator.replaceWhilesWithSwitches(obfuscatedFiles);
 
         obfuscatedFiles = obfuscator.flattenEntireProject(obfuscatedFiles);

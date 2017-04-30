@@ -2,6 +2,8 @@ package JavaObfuscator.FileReader;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,16 +14,24 @@ import java.util.stream.Collectors;
 public class FileRetriever implements IFileRetriever {
     public List<File> getFiles(String path) {
         File dir = new File(path);
+        ArrayList<File> files = new ArrayList<>();
+        listf(path, files);
 
-        List<File> fileList = Arrays.asList(dir.listFiles(new FilenameFilter() {
-            public boolean accept(File file, String fileName) {
-                if(fileName.endsWith(".java")){
-                    return true;
-                }
-                return false;
+        return files;
+    }
+
+    public void listf(String directoryName, ArrayList<File> files) {
+        File directory = new File(directoryName);
+
+        // get all the files from a directory
+        File[] fList = directory.listFiles();
+        for (File file : fList) {
+            if (file.isFile()) {
+                if(file.getPath().toLowerCase().endsWith(".java"))
+                    files.add(file);
+            } else if (file.isDirectory()) {
+                listf(file.getAbsolutePath(), files);
             }
-        }));
-
-        return fileList;
+        }
     }
 }

@@ -53,7 +53,7 @@ public class Obfuscator implements IObfuscator {
     public List<IObfuscatedFile> flattenEntireProject(List<IObfuscatedFile> obfuscatedFiles) {
         final Integer s;
 
-        for(int j = 0; j < 2; j++) {
+        for(int j = 0; j < 3; j++) {
             System.out.println(j);
             for (int i = 0; i < obfuscatedFiles.size(); i++) {
                 _genericStatementReplacer.applyChanges(obfuscatedFiles.get(i));

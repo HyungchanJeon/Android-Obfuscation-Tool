@@ -21,12 +21,15 @@ public class ObfuscatedType implements IObfuscatedFile {
     private File _baseFile;
 
     private String _fileName;
+
+    private String _filePath;
     private CompilationUnit _compilationUnit;
 
     public ObfuscatedType(File baseFile){
 
         _baseFile = baseFile;
         _fileName = baseFile.getName();
+        _filePath = baseFile.getAbsolutePath();
 
     }
 
@@ -54,7 +57,9 @@ public class ObfuscatedType implements IObfuscatedFile {
             e.printStackTrace();
         }
 
-        try(  PrintWriter out = new PrintWriter( path.toString() +  "\\" + _fileName)  ){
+        _baseFile.delete();
+
+        try(  PrintWriter out = new PrintWriter(_filePath)  ){
             out.println(  _compilationUnit.toString() );
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -69,6 +74,7 @@ public class ObfuscatedType implements IObfuscatedFile {
     @Override
     public void setFileName(String s) {
         _fileName = s;
+        _filePath = _baseFile.getParentFile().getPath() + "\\" + _fileName;
     }
 
     @Override

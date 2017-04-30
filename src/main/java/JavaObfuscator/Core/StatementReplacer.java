@@ -52,7 +52,11 @@ public class StatementReplacer {
         //Pull out declarations
         NodeList<Expression> declarationStatements = new NodeList<>();
         NodeList<Statement> returnStatement = new NodeList<>();
-        Statement switchStatement = generateSwith(node, declarationStatements, returnStatement);
+        NodeList<Statement> superStatements = new NodeList<>();
+        Statement switchStatement = generateSwith(node, declarationStatements,  superStatements, returnStatement);
+
+        //Pull out super() calls
+
 
 
         Statement innerWhile = new WhileStmt(generateWhileCondition(), switchStatement);
@@ -62,6 +66,8 @@ public class StatementReplacer {
 
         declarationStatements.forEach(st -> stmts.add(st));
         BlockStmt block = new BlockStmt();
+
+        superStatements.forEach(st -> block.addAndGetStatement(st));
 
         for(Expression n : stmts){
             block.addAndGetStatement(n);
@@ -79,10 +85,23 @@ public class StatementReplacer {
             block.addAndGetStatement(innerWhile);
         }
 
+
         returnStatement.forEach(st -> block.addAndGetStatement(st));
 
         return block;
     }
+
+
+    private NodeList<Statement> removeSuperCallsAndAddToList(NodeList<Statement> statements, NodeList<Statement> superStatements) {
+
+        if(statements.size() > 0 && statements.get(0).getClass().getSimpleName().equals("ExplicitConstructorInvocationStmt")){
+            superStatements.add(statements.get(0));
+            statements.remove(0);
+        }
+
+        return statements;
+    }
+
 
     /**
      * If it is a variable declaration statement, it will be replaced with a variable assignment
@@ -169,7 +188,8 @@ public class StatementReplacer {
      * @param declarationStatements
      * @return
      */
-    private Statement generateSwith(Node node, List<Expression> declarationStatements, List<Statement> lastStatement) {
+    private Statement generateSwith(Node node, List<Expression> declarationStatements,  NodeList<Statement> superStatements,
+                                    List<Statement> lastStatement) {
         NodeList<SwitchEntryStmt> statements = new NodeList<>();
 
         BlockStmt block = (BlockStmt) node;
@@ -189,7 +209,8 @@ public class StatementReplacer {
         String switchName = _nameGenerator.generateDistinct();
 
         for(Statement stmt : blockStatements) {
-            statements.add(generateCaseStatement(stmt, index, declarationStatements, node, block.getStatements().size(), switchName));
+            statements.add(generateCaseStatement(stmt, index, declarationStatements, superStatements, node, block.getStatements().size(),
+                    switchName));
             index++;
         }
 
@@ -201,13 +222,14 @@ public class StatementReplacer {
     }
 
     private SwitchEntryStmt generateCaseStatement(Statement stmt, Integer index, List<Expression> declarationStatements,
+                                                  NodeList<Statement> superStatements,
                                                      Node
             node, int max, String switchName) {
         NodeList<Statement> statements = new NodeList<Statement>();
 
 
 
-        statements.addAll(removeDeclarationAndAddToList(stmt, declarationStatements));
+        statements.addAll(removeSuperCallsAndAddToList(removeDeclarationAndAddToList(stmt, declarationStatements), superStatements));
 
 
         int nextSwVar = index + 1;
@@ -233,8 +255,6 @@ public class StatementReplacer {
 
         return switchEntryStmt;
     }
-
-
 
 
     public String getVariableName() {

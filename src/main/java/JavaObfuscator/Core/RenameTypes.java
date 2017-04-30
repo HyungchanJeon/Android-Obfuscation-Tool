@@ -2,8 +2,16 @@ package JavaObfuscator.Core;
 
 import JavaObfuscator.FileReader.IObfuscatedFile;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.github.javaparser.ast.type.Type;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -26,8 +34,25 @@ public class RenameTypes implements IFileModifier {
         replaceClassOrInterfaces(n);
         replaceMethodDeclarations(n);
         replaceVariableDeclarations(n);
-
+        replaceTypeArguments(n);
         n.getChildNodes().stream().forEach(node -> recurseAllNodes(node, file));
+    }
+
+    private void replaceTypeArguments(Node n) {
+        Class c = n.getClass();
+        if(c.getSimpleName().equals("FieldDeclaration")){
+            try {
+                FieldDeclaration variable = (FieldDeclaration)(n);
+                String variableTypeName = variable.getVariable(0).getType().toString();
+                if(variableTypeName.contains("<")){
+                    String innerType = variableTypeName.substring(variableTypeName.indexOf("<") + 1, variableTypeName.indexOf(">"));
+                    String newInnerType = _nameGenerator.getClassName(innerType);
+                    variable.getVariable(0).setType(new ClassOrInterfaceType(variableTypeName.substring(0, variableTypeName.indexOf("<"))
+                            + "<" + newInnerType + ">"
+                    ));
+                }
+            }catch (NoSuchElementException e){}
+        }
     }
 
     private void replaceVariableDeclarations(Node n) {

@@ -57,7 +57,7 @@ public class ObfuscatedType implements IObfuscatedFile {
             e.printStackTrace();
         }
 
-        
+        _baseFile.delete();
 
         try(  PrintWriter out = new PrintWriter(_filePath)  ){
             out.println(  _compilationUnit.toString() );
@@ -74,7 +74,7 @@ public class ObfuscatedType implements IObfuscatedFile {
     @Override
     public void setFileName(String s) {
         _fileName = s;
-        _filePath = _baseFile.getParentFile().getPath() + "\\out" + _fileName;
+        _filePath = _baseFile.getParentFile().getPath() + "\\" + _fileName;
     }
 
     @Override

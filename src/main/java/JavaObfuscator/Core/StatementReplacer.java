@@ -49,6 +49,7 @@ public class StatementReplacer {
      * @return
      */
     public BlockStmt generateSwitchInWhile(Node node){
+        _nextSwitchGenerator.reset();
         _nextSwitchInt = _nextSwitchGenerator.getRandomInteger();
         //Pull out declarations
         NodeList<Expression> declarationStatements = new NodeList<>();
@@ -215,7 +216,7 @@ public class StatementReplacer {
         }
 
         Collections.shuffle(statements);
-        
+
         SwitchStmt switchStmt = new SwitchStmt((Expression)(new NameExpr(_variableName)), statements);
 
         LabeledStmt lbl = new LabeledStmt(switchName, switchStmt);

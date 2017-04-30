@@ -24,8 +24,12 @@ public class NextSwitchGenerator {
                 found = true;
                 _inUse.add(next);
             }
-            int p = 0;
         }
         return next;
+    }
+
+    public void reset() {
+        _inUse = new ArrayList<>();
+        _inUse = new ArrayList<>();
     }
 }

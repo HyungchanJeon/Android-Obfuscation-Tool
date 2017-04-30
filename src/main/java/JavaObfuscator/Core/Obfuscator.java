@@ -16,11 +16,13 @@ public class Obfuscator implements IObfuscator {
     private INameGenerator _nameGenerator;
     private IFileModifier _renameTypes;
     private IFileModifier _renameVariables;
+    private IFileModifier _renameMethods;
     private IFileModifier _genericStatementReplacer;
 
-    public Obfuscator(INameGenerator nameGenerator, IFileModifier renameTypes, IFileModifier renameVariables, IFileModifier genericStatementReplacer){
+    public Obfuscator(INameGenerator nameGenerator, IFileModifier renameTypes, IFileModifier renameMethods, IFileModifier renameVariables, IFileModifier genericStatementReplacer){
         _nameGenerator = nameGenerator;
         _renameTypes = renameTypes;
+        _renameMethods = renameMethods;
         _renameVariables = renameVariables;
         _genericStatementReplacer = genericStatementReplacer;
     }
@@ -45,6 +47,16 @@ public class Obfuscator implements IObfuscator {
 
         for(int i = 0; i < obfuscatedFiles.size(); i++){
             _renameVariables.applyChanges(obfuscatedFiles.get(i));
+        }
+
+        return obfuscatedFiles;
+    }
+    
+    @Override
+    public List<IObfuscatedFile> randomiseMethodNames(List<IObfuscatedFile> obfuscatedFiles) {
+
+        for(int i = 0; i < obfuscatedFiles.size(); i++){
+            _renameMethods.applyChanges(obfuscatedFiles.get(i));
         }
 
         return obfuscatedFiles;

@@ -11,6 +11,7 @@ import com.github.javaparser.ast.type.Type;
 
 import javax.swing.plaf.nimbus.State;
 import java.lang.reflect.Array;
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -21,18 +22,17 @@ import java.util.stream.Stream;
  */
 public class StatementReplacer {
     INameGenerator _nameGenerator;
+    NextSwitchGenerator _nextSwitchGenerator = new NextSwitchGenerator();
 
+    Integer _nextSwitchInt = 0;
     private String _variableName;
 
     public StatementReplacer(INameGenerator nameGenerator){
+        _nextSwitchInt = _nextSwitchGenerator.getRandomInteger();
         _nameGenerator = nameGenerator;
         _variableName = nameGenerator.generateDistinct();
     }
 
-    public Node generateSwVarInitialiser(){
-        return new VariableDeclarationExpr(new VariableDeclarator(new PrimitiveType().setType(PrimitiveType.Primitive
-                .INT), _variableName, new IntegerLiteralExpr("1")));
-    }
 
     public BinaryExpr generateWhileCondition(){
         BinaryExpr condition = new BinaryExpr(new NameExpr(_variableName), new UnaryExpr(new IntegerLiteralExpr("1"), UnaryExpr.Operator
@@ -49,15 +49,17 @@ public class StatementReplacer {
      * @return
      */
     public BlockStmt generateSwitchInWhile(Node node){
+        _nextSwitchInt = _nextSwitchGenerator.getRandomInteger();
         //Pull out declarations
         NodeList<Expression> declarationStatements = new NodeList<>();
         NodeList<Statement> returnStatement = new NodeList<>();
         NodeList<Statement> superStatements = new NodeList<>();
+
+        ExpressionStmt swVarChange = new ExpressionStmt(new AssignExpr(new NameExpr(_variableName), new IntegerLiteralExpr(_nextSwitchInt
+                + ""),
+                AssignExpr.Operator.ASSIGN));
+
         Statement switchStatement = generateSwith(node, declarationStatements,  superStatements, returnStatement);
-
-        //Pull out super() calls
-
-
 
         Statement innerWhile = new WhileStmt(generateWhileCondition(), switchStatement);
 
@@ -75,8 +77,7 @@ public class StatementReplacer {
 
         ExpressionStmt swVarDeclaration = new ExpressionStmt(new VariableDeclarationExpr(PrimitiveType.intType(), _variableName));
 
-        ExpressionStmt swVarChange = new ExpressionStmt(new AssignExpr(new NameExpr(_variableName), new IntegerLiteralExpr("1"),
-                AssignExpr.Operator.ASSIGN));
+
 
         block.addAndGetStatement(swVarDeclaration);
         block.addAndGetStatement(swVarChange);
@@ -131,7 +132,6 @@ public class StatementReplacer {
                 assignments.add(new ExpressionStmt(assignExpr));
 
             }catch(NoSuchElementException e){
-                int jasdfkj = 0;
             }
 
         });
@@ -214,6 +214,8 @@ public class StatementReplacer {
             index++;
         }
 
+        Collections.shuffle(statements);
+        
         SwitchStmt switchStmt = new SwitchStmt((Expression)(new NameExpr(_variableName)), statements);
 
         LabeledStmt lbl = new LabeledStmt(switchName, switchStmt);
@@ -232,7 +234,7 @@ public class StatementReplacer {
         statements.addAll(removeSuperCallsAndAddToList(removeDeclarationAndAddToList(stmt, declarationStatements), superStatements));
 
 
-        int nextSwVar = index + 1;
+        int nextSwVar = _nextSwitchGenerator.getRandomInteger();
 
         if(index == max){
             nextSwVar = -1;
@@ -251,7 +253,9 @@ public class StatementReplacer {
 
         bs.add(new BlockStmt(statements));
 
-        SwitchEntryStmt switchEntryStmt = new SwitchEntryStmt(new IntegerLiteralExpr(index.toString()), bs);
+        SwitchEntryStmt switchEntryStmt = new SwitchEntryStmt(new IntegerLiteralExpr(_nextSwitchInt.toString()), bs);
+
+        _nextSwitchInt = nextSwVar;
 
         return switchEntryStmt;
     }

@@ -23,12 +23,12 @@ public class Main {
                 new RenameVariables(nameGenerator),
                 new GenericStatementReplacer(nameGenerator, new StatementGenerator()));
 
-        obfuscatedFiles = obfuscator.randomiseClassNames(obfuscatedFiles);
+        //obfuscatedFiles = obfuscator.randomiseClassNames(obfuscatedFiles);
         //obfuscatedFiles = obfuscator.randomiseMethodNames(obfuscatedFiles);
        // obfuscatedFiles = obfuscator.randomiseVariableNames(obfuscatedFiles);
 
 
-        //obfuscatedFiles = obfuscator.flattenEntireProject(obfuscatedFiles);
+        obfuscatedFiles = obfuscator.flattenEntireProject(obfuscatedFiles);
 
         for(IObfuscatedFile obfuscatedFile : obfuscatedFiles){
             obfuscatedFile.applyChanges();

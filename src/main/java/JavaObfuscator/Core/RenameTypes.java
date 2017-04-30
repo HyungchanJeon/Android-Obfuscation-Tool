@@ -35,7 +35,17 @@ public class RenameTypes implements IFileModifier {
         replaceMethodDeclarations(n);
         replaceVariableDeclarations(n);
         replaceTypeArguments(n);
+        replaceConstructors(n);
         n.getChildNodes().stream().forEach(node -> recurseAllNodes(node, file));
+    }
+
+    private void replaceConstructors(Node n) {
+        Class c = n.getClass();
+        if(c.getSimpleName().equals("ConstructorDeclaration")){
+            ConstructorDeclaration variable = (ConstructorDeclaration)(n);
+            variable.setName(_nameGenerator.getClassName(variable.getName().toString()));
+
+        }
     }
 
     private void replaceTypeArguments(Node n) {

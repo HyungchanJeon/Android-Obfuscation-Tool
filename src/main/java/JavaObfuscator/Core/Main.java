@@ -23,6 +23,20 @@ public class Main {
 
         NameGenerator nameGenerator = new NameGenerator();
 
+        Stream<TypeDeclaration<?>> classes = obfuscatedFiles.stream().map(f -> f.getCompilationUnit()).map(c -> c.getTypes()).flatMap
+                (Collection::stream);
+
+        List<String> classNames = classes.map(c -> c.getName().toString()).collect(Collectors.toList());
+        nameGenerator.setClassNames(classNames);
+
+
+        ClassOrInterfaceModifier modifier = new ClassOrInterfaceModifier(nameGenerator);
+        obfuscatedFiles.forEach(f -> modifier.remove(f.getCompilationUnit()));
+
+
+        for(IObfuscatedFile obfuscatedFile : obfuscatedFiles){
+            obfuscatedFile.applyChanges();
+        }
 
         CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver();
 
@@ -35,11 +49,9 @@ public class Main {
 
         SymbolSolver symbolSolver = new SymbolSolver(combinedTypeSolver);
 
-        Stream<TypeDeclaration<?>> classes = obfuscatedFiles.stream().map(f -> f.getCompilationUnit()).map(c -> c.getTypes()).flatMap
-                (Collection::stream);
 
-        List<String> classNames = classes.map(c -> c.getName().toString()).collect(Collectors.toList());
-        nameGenerator.setClassNames(classNames);
+
+
 
 
         Obfuscator obfuscator = new Obfuscator(
@@ -51,10 +63,14 @@ public class Main {
                 new RenameVariables(nameGenerator, combinedTypeSolver, symbolSolver),
                 new GenericStatementReplacer(nameGenerator, new StatementGenerator()));
 
+
+
         obfuscatedFiles = obfuscator.randomiseMethodNames(obfuscatedFiles);
         //obfuscatedFiles = obfuscator.randomiseVariableNames(obfuscatedFiles);
-        /*obfuscatedFiles = obfuscator.randomiseClassNames(obfuscatedFiles);
-        obfuscatedFiles = obfuscator.flattenEntireProject(obfuscatedFiles);*/
+        //obfuscatedFiles = obfuscator.randomiseClassNames(obfuscatedFiles);
+        //obfuscatedFiles = obfuscator.flattenEntireProject(obfuscatedFiles);
+
+        modifier.replace();
 
         for(IObfuscatedFile obfuscatedFile : obfuscatedFiles){
             obfuscatedFile.applyChanges();

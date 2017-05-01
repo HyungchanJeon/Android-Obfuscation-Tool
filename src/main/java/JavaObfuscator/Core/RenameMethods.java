@@ -32,12 +32,9 @@ public class RenameMethods implements IFileModifier {
     
     @Override
     public void applyChanges(IObfuscatedFile file) {
-        ClassOrInterfaceModifier modifier = new ClassOrInterfaceModifier(_nameGenerator);
-        modifier.remove(file.getCompilationUnit());
         List<Node> nodesToReplace = new ArrayList<>();
         recurseAllNodes(file.getCompilationUnit(), nodesToReplace);
         nodesToReplace.forEach(nd -> replaceMethodUsages(nd));
-        modifier.replace();
     }
 
     private void recurseAllNodes(Node n, List<Node> nodesToReplace){
@@ -53,8 +50,10 @@ public class RenameMethods implements IFileModifier {
             nodesToReplace.add(n);
         }
 
+
         if(c.getSimpleName().equals("MethodCallExpr")){
             MethodCallExpr methodName = (MethodCallExpr) (n);
+
 
             List<Type> types = new ArrayList<>();
             try{
@@ -65,12 +64,15 @@ public class RenameMethods implements IFileModifier {
                 MethodUsage methodUsage = _symbolSolver.solveMethod(
                         methodName.getNameAsString(),
                         types,
-                        n);
+                        methodName);
+
                     if (methodUsage.getDeclaration() != null) {
                         nodesToReplace.add(n);
                     }
             }
-            catch (Exception e) {}
+            catch (Exception e) {
+                int deleteThis = 1;
+            }
         }
     }
 

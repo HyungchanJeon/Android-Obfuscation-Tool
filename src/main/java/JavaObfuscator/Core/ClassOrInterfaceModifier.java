@@ -47,12 +47,13 @@ public class ClassOrInterfaceModifier {
     }
 
     public void replace(){
-        iterfacesAndSubClasses.keySet().forEach(key -> {
-            if(key.getExtendedTypes() == null){
-                key.setExtendedTypes(new NodeList<>());
+
+        iterfacesAndSubClasses.entrySet().forEach(key -> {
+            if(key.getKey().getExtendedTypes() == null){
+                key.getKey().setExtendedTypes(new NodeList<>());
             }
-            iterfacesAndSubClasses.values().forEach(type -> {
-                type.forEach(t -> key.addExtendedType(t));
+            key.getValue().forEach(type -> {
+                key.getKey().addExtendedType(type);
             });
         });
     }

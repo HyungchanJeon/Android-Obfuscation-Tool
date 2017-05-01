@@ -4,6 +4,7 @@ import JavaObfuscator.FileReader.IObfuscatedFile;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.*;
+import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.Type;
 
@@ -36,7 +37,17 @@ public class RenameTypes implements IFileModifier {
         replaceVariableDeclarations(n);
         replaceTypeArguments(n);
         replaceConstructors(n);
+        replaceNameExpressions(n);
         n.getChildNodes().stream().forEach(node -> recurseAllNodes(node, file));
+    }
+
+    private void replaceNameExpressions(Node n) {
+        Class c = n.getClass();
+        if(c.getSimpleName().equals("NameExpr")){
+            NameExpr variable = (NameExpr)(n);
+            variable.setName(_nameGenerator.getClassName(variable.getName().toString()));
+
+        }
     }
 
     private void replaceConstructors(Node n) {

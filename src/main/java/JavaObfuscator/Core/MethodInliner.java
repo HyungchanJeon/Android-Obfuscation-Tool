@@ -131,7 +131,9 @@ public class MethodInliner implements IFileModifier {
                 }
 
                 //Add literal assignments at the top of the method body
-                methodBlockStatements.addAll(0, literalAssignments);
+                for (Statement literalAssignment: literalAssignments){
+                    finalBlock.addStatement(0, literalAssignment);
+                }
 
                 //Build labelled infinite while loop to wrap the method contents
                 BinaryExpr condition = new BinaryExpr(new UnaryExpr(new IntegerLiteralExpr("1"), UnaryExpr.Operator.MINUS), new UnaryExpr(new IntegerLiteralExpr("1"), UnaryExpr.Operator.MINUS), BinaryExpr.Operator.EQUALS);

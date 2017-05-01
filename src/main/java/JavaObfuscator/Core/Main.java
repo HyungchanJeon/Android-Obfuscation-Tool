@@ -22,10 +22,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         IFileRetriever fileRetriever = new FileRetriever();
         ISourceReader reader = new SourceReader(fileRetriever);
-        List<IObfuscatedFile> obfuscatedFiles = reader.ParseSourceDirectory(
-                //"C:\\Users\\Jack Barker\\Documents\\702A11\\app\\src\\main\\java\\com\\example\\a702app\\passworddiary"
-                "C:\\tmp"
-                , ".java");
+        List<IObfuscatedFile> obfuscatedFiles = reader.ParseSourceDirectory("C:\\workspace\\app3\\app\\src\\main\\java\\com\\example\\a702app\\passworddiary", ".java");
 
         NameGenerator nameGenerator = new NameGenerator();
 
@@ -67,9 +64,12 @@ public class Main {
 
 
         //obfuscatedFiles = obfuscator.randomiseMethodNames(obfuscatedFiles);
-        obfuscatedFiles = obfuscator.randomiseVariableNames(obfuscatedFiles);
-        obfuscatedFiles = obfuscator.randomiseClassNames(obfuscatedFiles);
-        //obfuscatedFiles = obfuscator.flattenEntireProject(obfuscatedFiles);
+
+        //obfuscatedFiles = obfuscator.randomiseVariableNames(obfuscatedFiles);
+        //obfuscatedFiles = obfuscator.randomiseClassNames(obfuscatedFiles);
+
+        obfuscatedFiles = obfuscator.inlineMethods(obfuscatedFiles);
+        obfuscatedFiles = obfuscator.flattenEntireProject(obfuscatedFiles);
 
         modifier.replace();
 
@@ -77,8 +77,7 @@ public class Main {
 
         FileRetriever fr = new FileRetriever();
         List<File> files = fr.getFiles(
-                //"C:\\Users\\Jack Barker\\Documents\\702A11"
-                "C:\\tmp"
+        		"C:\\workspace\\app3\\app\\src\\main\\java\\com\\example\\a702app\\passworddiary"
                 , ".xml");
 
         files.forEach(f -> {

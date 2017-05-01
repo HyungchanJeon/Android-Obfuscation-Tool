@@ -23,8 +23,8 @@ public class Main {
         IFileRetriever fileRetriever = new FileRetriever();
         ISourceReader reader = new SourceReader(fileRetriever);
         List<IObfuscatedFile> obfuscatedFiles = reader.ParseSourceDirectory(
-                //"C:\\Users\\Jack Barker\\Documents\\702A11\\app\\src\\main\\java\\com\\example\\a702app\\passworddiary"
-                "C:\\tmp"
+                "C:\\Users\\Jack Barker\\Documents\\702A11\\app\\src\\main\\java\\com\\example\\a702app\\passworddiary"
+                //"C:\\tmp"
                 , ".java");
 
         NameGenerator nameGenerator = new NameGenerator();
@@ -67,8 +67,9 @@ public class Main {
 
 
         //obfuscatedFiles = obfuscator.randomiseMethodNames(obfuscatedFiles);
-        obfuscatedFiles = obfuscator.randomiseVariableNames(obfuscatedFiles);
-        obfuscatedFiles = obfuscator.randomiseClassNames(obfuscatedFiles);
+        //obfuscatedFiles = obfuscator.randomiseVariableNames(obfuscatedFiles);
+        //obfuscatedFiles = obfuscator.randomiseClassNames(obfuscatedFiles);
+        obfuscator.inlineMethods(obfuscatedFiles);
         //obfuscatedFiles = obfuscator.flattenEntireProject(obfuscatedFiles);
 
         modifier.replace();
@@ -77,8 +78,8 @@ public class Main {
 
         FileRetriever fr = new FileRetriever();
         List<File> files = fr.getFiles(
-                //"C:\\Users\\Jack Barker\\Documents\\702A11"
-                "C:\\tmp"
+                "C:\\Users\\Jack Barker\\Documents\\702A11"
+                //"C:\\tmp"
                 , ".xml");
 
         files.forEach(f -> {

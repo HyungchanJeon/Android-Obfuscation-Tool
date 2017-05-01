@@ -12,11 +12,13 @@ import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 import com.sun.glass.ui.EventLoop;
+import com.sun.org.apache.regexp.internal.RE;
 import com.sun.tools.internal.ws.processor.model.Block;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -45,6 +47,7 @@ public class MethodInliner implements IFileModifier {
 
         //Iterate through all method calls we found, and check if they can be inlined.
         for (MethodCallExpr methodCall : _methodCallExpressions){
+            loopIteration:
             if (_privateMethodBodyNodes.containsKey(methodCall.getNameAsString())){
 
                 //Find top level block statement where the method call is used and the statement where the method is called.
@@ -53,7 +56,11 @@ public class MethodInliner implements IFileModifier {
                 if (topStmtNode.getParentNode().isPresent()){
                     while (!topStmtNode.getClass().getSimpleName().equals("BlockStmt")){
                         methodCallNode = topStmtNode;
-                        topStmtNode = topStmtNode.getParentNode().get();
+                        if (topStmtNode.getParentNode().isPresent()){
+                            topStmtNode = topStmtNode.getParentNode().get();
+                        } else {
+                            break loopIteration;
+                        }
                     }
                 }
                 BlockStmt oldBlock = (BlockStmt) topStmtNode;
@@ -108,8 +115,9 @@ public class MethodInliner implements IFileModifier {
                 //If the method callNode isn't a return statement, then find all return statements and replace with variable assignments and break statements to simulate returns.
                 if (!methodCallNode.getClass().getSimpleName().equals("ReturnStmt")) {
 
-                    methodBlockStatements.add(methodBlockStatements.size(), new BreakStmt(LABEL));
-                    convertReturnStatements(methodBlock, LABEL, returnExpression);
+                    ArrayList<ReturnStmt> returnStmts = new ArrayList<ReturnStmt>();
+                    convertReturnStatements(methodBlock, LABEL, returnExpression, returnStmts);
+                    if (returnStmts.size() == 0) methodBlockStatements.add(methodBlockStatements.size(), new BreakStmt(LABEL));
 
                     Expression methodCallExpression = ((ExpressionStmt) methodCallNode).getExpression();
 
@@ -118,7 +126,7 @@ public class MethodInliner implements IFileModifier {
 
                         System.out.println("it is " + methodCallExpression);
                         VariableDeclarationExpr variableDec = (VariableDeclarationExpr) methodCallExpression;
-                        finalBlock.addStatement(0, new VariableDeclarationExpr(variableDec.getVariable(0).getType(), variableDec.getVariable(0).getNameAsString()));
+                        finalBlock.addStatement(0, new AssignExpr(new VariableDeclarationExpr(variableDec.getVariable(0).getType(), variableDec.getVariable(0).getNameAsString()),new NullLiteralExpr(), AssignExpr.Operator.ASSIGN));
                     }
                 }
 
@@ -142,7 +150,7 @@ public class MethodInliner implements IFileModifier {
         }
     }
 
-    private void convertReturnStatements(Node node, String breakLabel, Expression returnVariableName){
+    private void convertReturnStatements(Node node, String breakLabel, Expression returnVariableName, ArrayList<ReturnStmt> returnStmts){
 
         //Check if the node passed is a BlockStmt - if so we can check its statements.
         if (node.getClass().getSimpleName().equals("BlockStmt")){
@@ -156,6 +164,7 @@ public class MethodInliner implements IFileModifier {
                 //If we find a return statement replace it with an assign expression
                 if (methodBlockStatement.getClass().getSimpleName().equals("ReturnStmt")){
                     ReturnStmt returnStmt = (ReturnStmt) methodBlockStatement;
+                    returnStmts.add(returnStmt);
                     Expression expressionBeingReturned = returnStmt.getExpression().get();
 
                     AssignExpr assignExpr = new AssignExpr(returnVariableName, expressionBeingReturned, AssignExpr.Operator.ASSIGN);
@@ -167,13 +176,14 @@ public class MethodInliner implements IFileModifier {
         }
 
         //Recursively find all other Block statements
-        node.getChildNodes().stream().forEach(n -> convertReturnStatements(n, breakLabel, returnVariableName));
+        node.getChildNodes().stream().forEach(n -> convertReturnStatements(n, breakLabel, returnVariableName, returnStmts));
     }
 
     private ArrayList<Statement> renameParamVariables(MethodCallExpr methodCall, BlockStmt body){
 
         HashMap<String, String> _scopedNameExpressions = new HashMap<String, String>();
         ArrayList<Statement> literalAssignments = new ArrayList<Statement>();
+        HashSet<String> paramNames = new HashSet<String>();
         MethodDeclaration methodDec = _privateMethodBodyNodes.get(methodCall.getNameAsString());
         NodeList<Parameter> methodParameters = methodDec.getParameters();
         NodeList<Expression> methodArguments = methodCall.getArguments();
@@ -182,23 +192,28 @@ public class MethodInliner implements IFileModifier {
         for (int i = 0; i < methodParameters.size(); i++){
             if (methodArguments.get(i).getClass().getSimpleName().equals("NameExpr")){
                 _scopedNameExpressions.put(methodParameters.get(i).getNameAsString(), ((NameExpr)(methodArguments.get(i))).getNameAsString());
+                paramNames.add(methodParameters.get(i).getNameAsString());
             } else {
                 literalAssignments.add(new ExpressionStmt(assignLiteralArgument(methodArguments.get(i), methodParameters.get(i))));
             }
         }
 
+        //Build list of all variables scoped to this method body.
+        HashSet<String> methodDecVariables = new HashSet<String>();
+        getLocallyScopedVariables(body, methodDecVariables);
+
         //Using mapping recursively rename all variables in the method.
-        renameNamedVariablesRecursively(body, _scopedNameExpressions);
+        renameNamedVariablesRecursively(body, _scopedNameExpressions, paramNames, methodDecVariables);
 
         return literalAssignments;
     }
 
     private AssignExpr assignLiteralArgument(Expression argument, Parameter param) {
-        return new AssignExpr( new VariableDeclarationExpr(param.getType(), param.getNameAsString()), argument,
+        return new AssignExpr(new VariableDeclarationExpr(param.getType(), param.getNameAsString()), argument,
                 AssignExpr.Operator.ASSIGN);
     }
 
-    private void renameNamedVariablesRecursively(Node n, HashMap<String, String> _scopedNameExpressions){
+    private void renameNamedVariablesRecursively(Node n, HashMap<String, String> _scopedNameExpressions, HashSet<String> paramNames, HashSet<String> methodDecVariables){
 
         Class c = n.getClass();
 
@@ -206,21 +221,40 @@ public class MethodInliner implements IFileModifier {
             NameExpr expr = (NameExpr) (n);
             if (_scopedNameExpressions.containsKey(expr.getNameAsString())){
                 expr.setName(_scopedNameExpressions.get(expr.getNameAsString()));
+            } else if (!paramNames.contains(expr.getNameAsString()) && methodDecVariables.contains(expr.getNameAsString())){
+                String newVariableName = _nameGenerator.getVariableName(expr.getNameAsString());
+                expr.setName(newVariableName);
             }
         }
         if(c.getSimpleName().equals("VariableDeclarator")){
             VariableDeclarator expr = (VariableDeclarator) (n);
             if (_scopedNameExpressions.containsKey(expr.getNameAsString())){
                 expr.setName(_scopedNameExpressions.get(expr.getNameAsString()));
+            } else if (!paramNames.contains(expr.getNameAsString()) && methodDecVariables.contains(expr.getNameAsString())){
+                String newVariableName = _nameGenerator.getVariableName(expr.getNameAsString());
+                expr.setName(newVariableName);
             }
         }
         if(c.getSimpleName().equals("Parameter")){
             Parameter expr = (Parameter) (n);
             if (_scopedNameExpressions.containsKey(expr.getNameAsString())){
                 expr.setName(_scopedNameExpressions.get(expr.getNameAsString()));
+            } else if (!paramNames.contains(expr.getNameAsString())&& methodDecVariables.contains(expr.getNameAsString())){
+                String newVariableName = _nameGenerator.getVariableName(expr.getNameAsString());
+                expr.setName(newVariableName);
             }
         }
-        n.getChildNodes().stream().forEach(node -> renameNamedVariablesRecursively(node, _scopedNameExpressions));
+        n.getChildNodes().stream().forEach(node -> renameNamedVariablesRecursively(node, _scopedNameExpressions, paramNames, methodDecVariables));
+    }
+
+    private void getLocallyScopedVariables(Node n, HashSet<String> methodDecVariables){
+
+        Class c = n.getClass();
+        if(c.getSimpleName().equals("VariableDeclarator")){
+            VariableDeclarator expr = (VariableDeclarator) (n);
+            methodDecVariables.add(expr.getNameAsString());
+        }
+        n.getChildNodes().stream().forEach(node -> getLocallyScopedVariables(node, methodDecVariables));
     }
 
     private void findPrivateMethods(Node n){

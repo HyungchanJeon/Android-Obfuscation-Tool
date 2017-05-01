@@ -80,10 +80,13 @@ public class Main {
         FileRetriever fr = new FileRetriever();
         List<File> files = fr.getFiles("C:\\Users\\Jack Barker\\Documents\\702A11", ".xml");
 
-        /*files.forEach(f -> {
+        files.forEach(f -> {
             try {
                 String contents = new String(Files.readAllBytes(Paths.get(f.getAbsolutePath().toString())));
-                classNames.forEach(name -> contents.replaceAll(name, nameGenerator.getClassName(name)));
+                for(String name : classNames){
+                    contents = contents.replaceAll(name, nameGenerator.getClassName(name));
+                }
+
                 FileWriter writer = new FileWriter(f, false);
                 writer.write(contents);
                 writer.close();
@@ -91,7 +94,7 @@ public class Main {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        });*/
+        });
 
         for(IObfuscatedFile obfuscatedFile : obfuscatedFiles){
             obfuscatedFile.applyChanges();

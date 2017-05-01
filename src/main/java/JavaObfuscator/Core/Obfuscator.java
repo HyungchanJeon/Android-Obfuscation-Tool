@@ -17,13 +17,15 @@ public class Obfuscator implements IObfuscator {
     private IFileModifier _renameTypes;
     private IFileModifier _renameVariables;
     private IFileModifier _renameMethods;
+    private  IFileModifier _methodInliner;
     private IFileModifier _genericStatementReplacer;
 
-    public Obfuscator(INameGenerator nameGenerator, IFileModifier renameTypes, IFileModifier renameMethods, IFileModifier renameVariables, IFileModifier genericStatementReplacer){
+    public Obfuscator(INameGenerator nameGenerator, IFileModifier renameTypes, IFileModifier renameMethods, IFileModifier renameVariables,IFileModifier methodInliner, IFileModifier genericStatementReplacer){
         _nameGenerator = nameGenerator;
         _renameTypes = renameTypes;
         _renameMethods = renameMethods;
         _renameVariables = renameVariables;
+        _methodInliner = methodInliner;
         _genericStatementReplacer = genericStatementReplacer;
     }
 
@@ -51,7 +53,7 @@ public class Obfuscator implements IObfuscator {
 
         return obfuscatedFiles;
     }
-    
+
     @Override
     public List<IObfuscatedFile> randomiseMethodNames(List<IObfuscatedFile> obfuscatedFiles) {
 
@@ -61,6 +63,18 @@ public class Obfuscator implements IObfuscator {
 
         return obfuscatedFiles;
     }
+
+
+    @Override
+    public List<IObfuscatedFile> inlineMethods(List<IObfuscatedFile> obfuscatedFiles) {
+
+        for(int i = 0; i < obfuscatedFiles.size(); i++){
+            _methodInliner.applyChanges(obfuscatedFiles.get(i));
+        }
+
+        return obfuscatedFiles;
+    }
+
 
     public List<IObfuscatedFile> flattenEntireProject(List<IObfuscatedFile> obfuscatedFiles) {
         final Integer s;

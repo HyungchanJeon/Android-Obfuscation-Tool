@@ -65,8 +65,8 @@ public class Main {
 
 
 
-        obfuscatedFiles = obfuscator.randomiseMethodNames(obfuscatedFiles);
-        //obfuscatedFiles = obfuscator.randomiseVariableNames(obfuscatedFiles);
+        //obfuscatedFiles = obfuscator.randomiseMethodNames(obfuscatedFiles);
+        obfuscatedFiles = obfuscator.randomiseVariableNames(obfuscatedFiles);
         //obfuscatedFiles = obfuscator.randomiseClassNames(obfuscatedFiles);
         //obfuscatedFiles = obfuscator.flattenEntireProject(obfuscatedFiles);
 

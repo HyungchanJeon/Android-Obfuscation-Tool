@@ -59,6 +59,19 @@ public class RenameVariables implements IFileModifier {
             }
         }
 
+        if(c.getSimpleName().equals("FieldAccessExpr")){
+            FieldAccessExpr variableUsage = (FieldAccessExpr) (n);
+
+            SymbolReference<? extends ValueDeclaration> z = _symbolSolver.solveSymbol(variableUsage.getChildNodes().get(1).toString(),
+                    n);
+            try{
+                if(z.getCorrespondingDeclaration() != null){
+                    nodesToReplace.add(n);
+                }
+            }catch (UnsupportedOperationException e){
+            }
+        }
+
         if(c.getSimpleName().equals("VariableDeclarator")){
             nodesToReplace.add(n);
         }
@@ -76,6 +89,13 @@ public class RenameVariables implements IFileModifier {
 
             String newVariableName = _nameGenerator.getVariableName(variableUsage.getNameAsString());
             variableUsage.setName(newVariableName);
+        }
+
+        if(c.getSimpleName().equals("FieldAccessExpr")){
+            FieldAccessExpr variableUsage = (FieldAccessExpr) (n);
+
+            SimpleName name = (SimpleName)variableUsage.getChildNodes().get(1);
+            name.setIdentifier(_nameGenerator.getVariableName(name.getIdentifier()));
         }
 
         if(c.getSimpleName().equals("VariableDeclarator")){

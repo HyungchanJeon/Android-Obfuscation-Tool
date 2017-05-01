@@ -19,6 +19,7 @@ public class Obfuscator implements IObfuscator {
     private IFileModifier _renameTypes;
     private IFileModifier _renameVariables;
     private IFileModifier _renameMethods;
+    private IFileModifier _methodInliner;
     private IFileModifier _genericStatementReplacer;
     private CombinedTypeSolver _combinedTypeSolver;
     private SymbolSolver _symbolSolver;

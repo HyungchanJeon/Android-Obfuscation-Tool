@@ -12,4 +12,6 @@ public interface IObfuscator {
     List<IObfuscatedFile> randomiseVariableNames(List<IObfuscatedFile> javaSources);
     List<IObfuscatedFile> randomiseMethodNames(List<IObfuscatedFile> javaSources);
     List<IObfuscatedFile> inlineMethods(List<IObfuscatedFile> obfuscatedFiles);
+
+    List<IObfuscatedFile> splitStrings(List<IObfuscatedFile> obfuscatedFiles);
 }

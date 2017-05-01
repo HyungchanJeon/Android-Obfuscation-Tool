@@ -23,8 +23,12 @@ public class Obfuscator implements IObfuscator {
     private IFileModifier _genericStatementReplacer;
     private CombinedTypeSolver _combinedTypeSolver;
     private SymbolSolver _symbolSolver;
+    private IFileModifier _stringSplitter;
 
-    public Obfuscator(CombinedTypeSolver combinedTypeSolver, INameGenerator nameGenerator, SymbolSolver symbolSolver, IFileModifier renameTypes, IFileModifier renameMethods, IFileModifier renameVariables, IFileModifier methodInliner, IFileModifier genericStatementReplacer){
+
+    public Obfuscator(CombinedTypeSolver combinedTypeSolver, INameGenerator nameGenerator, SymbolSolver symbolSolver,
+                      IFileModifier renameTypes, IFileModifier renameMethods, IFileModifier renameVariables, IFileModifier methodInliner,
+                      IFileModifier genericStatementReplacer, IFileModifier stringSplitter){
         _combinedTypeSolver = combinedTypeSolver;
         _symbolSolver = symbolSolver;
        _nameGenerator = nameGenerator;
@@ -33,6 +37,7 @@ public class Obfuscator implements IObfuscator {
         _renameVariables = renameVariables;
         _methodInliner = methodInliner;
         _genericStatementReplacer = genericStatementReplacer;
+        _stringSplitter = stringSplitter;
     }
 
     @Override
@@ -71,6 +76,15 @@ public class Obfuscator implements IObfuscator {
 
         for(int i = 0; i < obfuscatedFiles.size(); i++){
             _methodInliner.applyChanges(obfuscatedFiles.get(i));
+        }
+
+        return obfuscatedFiles;
+    }
+
+    @Override
+    public List<IObfuscatedFile> splitStrings(List<IObfuscatedFile> obfuscatedFiles) {
+        for(int i = 0; i < obfuscatedFiles.size(); i++){
+            _stringSplitter.applyChanges(obfuscatedFiles.get(i));
         }
 
         return obfuscatedFiles;

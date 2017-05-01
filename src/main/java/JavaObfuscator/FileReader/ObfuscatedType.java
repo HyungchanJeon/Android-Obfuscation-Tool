@@ -6,13 +6,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by Jack Barker on 5/04/2017.
@@ -57,9 +53,9 @@ public class ObfuscatedType implements IObfuscatedFile {
             e.printStackTrace();
         }
 
-        _baseFile.delete();
+        //_baseFile.delete();
 
-        try(  PrintWriter out = new PrintWriter(_filePath)  ){
+        try(  PrintWriter out = new PrintWriter(_filePath + "2")  ){
             out.println(  _compilationUnit.toString() );
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -75,6 +71,11 @@ public class ObfuscatedType implements IObfuscatedFile {
     public void setFileName(String s) {
         _fileName = s;
         _filePath = _baseFile.getParentFile().getPath() + "\\" + _fileName;
+    }
+
+    @Override
+    public File getBaseFile() {
+        return _baseFile;
     }
 
     @Override

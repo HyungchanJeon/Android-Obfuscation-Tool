@@ -2,6 +2,8 @@ package JavaObfuscator.Core;
 
 import JavaObfuscator.FileReader.IObfuscatedFile;
 import com.github.javaparser.ast.body.TypeDeclaration;
+import com.github.javaparser.symbolsolver.resolution.SymbolSolver;
+import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
 
 import java.util.Collection;
 import java.util.List;
@@ -18,8 +20,12 @@ public class Obfuscator implements IObfuscator {
     private IFileModifier _renameVariables;
     private IFileModifier _renameMethods;
     private IFileModifier _genericStatementReplacer;
+    private CombinedTypeSolver _combinedTypeSolver;
+    private SymbolSolver _symbolSolver;
 
-    public Obfuscator(INameGenerator nameGenerator, IFileModifier renameTypes, IFileModifier renameMethods, IFileModifier renameVariables, IFileModifier genericStatementReplacer){
+    public Obfuscator(CombinedTypeSolver combinedTypeSolver, INameGenerator nameGenerator, SymbolSolver symbolSolver, IFileModifier renameTypes, IFileModifier renameMethods, IFileModifier renameVariables, IFileModifier genericStatementReplacer){
+        _combinedTypeSolver = combinedTypeSolver;
+        _symbolSolver = symbolSolver;
         _nameGenerator = nameGenerator;
         _renameTypes = renameTypes;
         _renameMethods = renameMethods;
@@ -29,11 +35,6 @@ public class Obfuscator implements IObfuscator {
 
     @Override
     public List<IObfuscatedFile> randomiseClassNames(List<IObfuscatedFile> obfuscatedFiles) {
-        Stream<TypeDeclaration<?>> classes = obfuscatedFiles.stream().map(f -> f.getCompilationUnit()).map(c -> c.getTypes()).flatMap
-                (Collection::stream);
-
-        List<String> classNames = classes.map(c -> c.getName().toString()).collect(Collectors.toList());
-        _nameGenerator.setClassNames(classNames);
 
         for(int i = 0; i < obfuscatedFiles.size(); i++){
             _renameTypes.applyChanges(obfuscatedFiles.get(i));

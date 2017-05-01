@@ -2,8 +2,8 @@ package JavaObfuscator.FileReader;
 
 import com.github.javaparser.ast.CompilationUnit;
 
+import java.io.File;
 import java.nio.file.Path;
-import java.util.List;
 
 /**
  * Created by Jack Barker on 5/04/2017.
@@ -20,4 +20,6 @@ public interface IObfuscatedFile {
     String getFileName();
 
     void setFileName(String s);
+
+    File getBaseFile();
 }

@@ -33,4 +33,8 @@ dependencies {
     //compile 'com.netflix.devinsight.rewrite:rewrite-core:0.18.4'
     compile 'com.github.javaparser:javaparser-core:3.0.1'
 
+    // https://mvnrepository.com/artifact/com.github.javaparser/java-symbol-solver-core
+    compile group: 'com.github.javaparser', name: 'java-symbol-solver-core', version: '0.5.2'
+
+
 }

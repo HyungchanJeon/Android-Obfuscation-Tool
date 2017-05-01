@@ -6,10 +6,8 @@ import com.github.javaparser.ast.CompilationUnit;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Created by Jack Barker on 4/04/2017.
@@ -22,9 +20,9 @@ public class SourceReader implements ISourceReader {
         _fileRetriever = fileRetriever;
     }
 
-    public List<IObfuscatedFile> ParseSourceDirectory(String path) throws IOException {
+    public List<IObfuscatedFile> ParseSourceDirectory(String path, String extension) throws IOException {
 
-        List<File> javaFiles = _fileRetriever.getFiles(path);
+        List<File> javaFiles = _fileRetriever.getFiles(path, extension);
 
         List<IObfuscatedFile> obfuscatedFiles =  javaFiles.stream().map(i -> {
             IObfuscatedFile file = new ObfuscatedType(i);

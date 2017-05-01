@@ -30,49 +30,15 @@ public class RenameVariables implements IFileModifier {
         _combinedTypeSolver = combinedTypeSolver;
         _nameGenerator = nameGenerator;
     }
-    private void removeUnknown(Node node, HashMap<ClassOrInterfaceDeclaration, ArrayList<ClassOrInterfaceType>> nodes) {
-        if(node.getClass().getSimpleName().equals("ClassOrInterfaceDeclaration")){
-            ClassOrInterfaceDeclaration declaration = (ClassOrInterfaceDeclaration)node;
-            List<ClassOrInterfaceType> extendedTypes = declaration.getExtendedTypes();
-            List<ClassOrInterfaceType> toRemove = new ArrayList<>();
-
-            extendedTypes.forEach(type -> {
-                if(_nameGenerator.getClassName(type.getNameAsString()).equals(type.getNameAsString())){
-                    if(nodes.containsKey(declaration)){
-                        nodes.get(declaration).add(type);
-                    }else{
-                        ArrayList<ClassOrInterfaceType> list = new ArrayList<>();
-                        list.add(type);
-                        nodes.put(declaration, list);
-                    }
-
-                    toRemove.add(type);
-                }
-            });
-
-            toRemove.forEach(type -> type.remove());
-        }
-        node.getChildNodes().forEach(n -> removeUnknown(n, nodes));
-    }
 
     @Override
     public void applyChanges(IObfuscatedFile file) {
-        CompilationUnit modifiedCu = file.getCompilationUnit();
-        HashMap<ClassOrInterfaceDeclaration, ArrayList<ClassOrInterfaceType>> iterfacesAndSubClasses = new HashMap<>();
-        removeUnknown(modifiedCu, iterfacesAndSubClasses);
-
+        ClassOrInterfaceModifier modifier = new ClassOrInterfaceModifier(_nameGenerator);
+        modifier.remove(file.getCompilationUnit());
         List<Node> nodesToReplace = new ArrayList<>();
-        recurseAllNodes(modifiedCu, file, nodesToReplace);
+        recurseAllNodes(file.getCompilationUnit(), file, nodesToReplace);
         nodesToReplace.forEach(nd -> replaceVariableUsages(nd));
-
-        iterfacesAndSubClasses.keySet().forEach(key -> {
-            if(key.getExtendedTypes() == null){
-                key.setExtendedTypes(new NodeList<>());
-            }
-            iterfacesAndSubClasses.values().forEach(type -> {
-                type.forEach(t -> key.addExtendedType(t));
-            });
-        });
+        modifier.replace();
     }
 
     private void recurseAllNodes(Node n, IObfuscatedFile file, List<Node> nodesToReplace){

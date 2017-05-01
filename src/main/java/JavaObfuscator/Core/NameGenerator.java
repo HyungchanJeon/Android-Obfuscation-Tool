@@ -73,6 +73,10 @@ public class NameGenerator implements INameGenerator {
 
     public String getVariableName(String oldName){
 
+        if(oldName.equals("menu")){
+            return oldName;
+        }
+
         if(_variablesNames.containsKey(oldName)){
             return _variablesNames.get(oldName);
         }

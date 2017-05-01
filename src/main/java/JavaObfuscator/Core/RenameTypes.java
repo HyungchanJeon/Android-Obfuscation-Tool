@@ -81,7 +81,16 @@ public class RenameTypes implements IFileModifier {
         if(c.getSimpleName().equals("VariableDeclarator")){
             VariableDeclarator variable = (VariableDeclarator)(n);
             String newTypeName = _nameGenerator.getClassName(variable.getType().toString());
-            variable.setType(newTypeName);
+            if(newTypeName.contains("<")){
+                String innerType = newTypeName.substring(newTypeName.indexOf("<") + 1, newTypeName.indexOf(">"));
+                String newInnerType = _nameGenerator.getClassName(innerType);
+                variable.setType(new ClassOrInterfaceType(newTypeName.substring(0, newTypeName.indexOf("<"))
+                        + "<" + newInnerType + ">"
+                ));
+            }else{
+                variable.setType(newTypeName);
+            }
+
         }
     }
 

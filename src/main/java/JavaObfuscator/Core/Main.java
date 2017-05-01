@@ -41,17 +41,18 @@ public class Main {
         List<String> classNames = classes.map(c -> c.getName().toString()).collect(Collectors.toList());
         nameGenerator.setClassNames(classNames);
 
+
         Obfuscator obfuscator = new Obfuscator(
                 combinedTypeSolver,
                 nameGenerator,
                 symbolSolver,
                 new RenameTypes(nameGenerator),
-                new RenameMethods(nameGenerator),
+                new RenameMethods(nameGenerator, symbolSolver),
                 new RenameVariables(nameGenerator, combinedTypeSolver, symbolSolver),
                 new GenericStatementReplacer(nameGenerator, new StatementGenerator()));
 
-        //obfuscatedFiles = obfuscator.randomiseMethodNames(obfuscatedFiles);
-        obfuscatedFiles = obfuscator.randomiseVariableNames(obfuscatedFiles);
+        obfuscatedFiles = obfuscator.randomiseMethodNames(obfuscatedFiles);
+        //obfuscatedFiles = obfuscator.randomiseVariableNames(obfuscatedFiles);
         /*obfuscatedFiles = obfuscator.randomiseClassNames(obfuscatedFiles);
         obfuscatedFiles = obfuscator.flattenEntireProject(obfuscatedFiles);*/
 

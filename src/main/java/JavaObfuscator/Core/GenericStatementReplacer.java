@@ -51,6 +51,7 @@ public class GenericStatementReplacer implements IFileModifier {
         parentBlock.setStatements(newNode.getStatements());
     }
 
+
     private void recurseAllNodes(Node n, ArrayList<Node> blockStatements){
         Class c = n.getClass();
         if(c.getSimpleName().equals("BlockStmt")){

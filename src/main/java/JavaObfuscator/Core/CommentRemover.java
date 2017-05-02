@@ -16,6 +16,8 @@ import java.util.stream.Stream;
 
 
 /**
+ * Removes comments from the java source AST
+ *
  * Created by Jack Barker on 5/04/2017.
  */
 public class CommentRemover implements IFileModifier {
@@ -26,11 +28,23 @@ public class CommentRemover implements IFileModifier {
         recurseAllNodes(file.getCompilationUnit(), file);
     }
 
+    /**
+     * Recursively remove all comments in the AST
+     *
+     * @param n Node to traverse recursively
+     * @param file File containing java source code to remove comments in
+     */
     private void recurseAllNodes(Node n, IObfuscatedFile file){
         removeComments(n);
         n.getChildNodes().stream().forEach(node -> recurseAllNodes(node, file));
     }
 
+
+    /**
+     * Remove comments from the specified node
+     *
+     * @param n Node to remove comments from
+     */
     private void removeComments(Node n) {
         System.out.println(n.getComment());
         n.setComment(null);

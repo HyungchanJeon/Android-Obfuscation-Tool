@@ -13,7 +13,7 @@ import java.util.List;
 
 
 /**
- * Created by Jack Barker on 5/04/2017.
+ * The file modifer for statement replacer
  */
 public class GenericStatementReplacer implements IFileModifier {
     INameGenerator _nameGenerator;
@@ -23,13 +23,21 @@ public class GenericStatementReplacer implements IFileModifier {
 
     private Object List;
 
+    /**
+     * Constructor
+     * @param nameGenerator
+     * @param statementGenerator
+     */
     public GenericStatementReplacer(INameGenerator nameGenerator, IStatementGenerator statementGenerator){
         _nameGenerator = nameGenerator;
         _statementGenerator = statementGenerator;
         _statementReplacer = new StatementReplacer(_nameGenerator);
     }
 
-
+    /**
+     * Applies the changes
+     * @param file
+     */
     @Override
     public void applyChanges(IObfuscatedFile file) {
         ArrayList<Node> blockStatements = new ArrayList<Node>();
@@ -39,7 +47,6 @@ public class GenericStatementReplacer implements IFileModifier {
 
     /**
      * This method changes any statements to switches:
-     *
      * @param node
      */
     private void flatten(Node node) {
@@ -56,7 +63,6 @@ public class GenericStatementReplacer implements IFileModifier {
         if(c.getSimpleName().equals("BlockStmt")){
             blockStatements.add(n);
         }
-        //generateSwitch(n);
         n.getChildNodes().stream().forEach(node -> recurseAllNodes(node, blockStatements));
     }
 }

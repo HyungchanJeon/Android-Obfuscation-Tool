@@ -70,9 +70,6 @@ public class Main {
         if(module == 0){
             obfuscatedFiles = obfuscator.removeComments(obfuscatedFiles);
         }
-        if(module == 1){
-            obfuscatedFiles = obfuscator.randomiseMethodNames(obfuscatedFiles);
-        }
         if(module == 2){
             obfuscatedFiles = obfuscator.randomiseVariableNames(obfuscatedFiles);
         }

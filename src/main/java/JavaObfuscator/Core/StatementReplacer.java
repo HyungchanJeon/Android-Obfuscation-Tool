@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Created by Jack Barker on 28/04/2017.
+ * Replaces statements with a while loop and switch statements
  */
 public class StatementReplacer {
     INameGenerator _nameGenerator;
@@ -28,12 +28,20 @@ public class StatementReplacer {
     Integer _nextSwitchInt = 0;
     private String _variableName;
 
+    /**
+     * Constructor
+     * @param nameGenerator
+     */
     public StatementReplacer(INameGenerator nameGenerator){
         _nextSwitchInt = _nextSwitchGenerator.getRandomInteger();
         _nameGenerator = nameGenerator;
         _variableName = nameGenerator.generateDistinct();
     }
 
+    /**
+     * Generates the condition that goes in the while loop
+     * @return
+     */
     public BinaryExpr generateWhileCondition(){
 
         NodeList<Expression> args = new NodeList<>();
@@ -83,8 +91,6 @@ public class StatementReplacer {
         ExpressionStmt swVarDeclaration = new ExpressionStmt(new VariableDeclarationExpr(new ClassOrInterfaceType("String"),
                 _variableName));
 
-
-
         block.addAndGetStatement(swVarDeclaration);
         block.addAndGetStatement(swVarChange);
 
@@ -98,9 +104,13 @@ public class StatementReplacer {
         return block;
     }
 
-
+    /**
+     * Removes super() calls so that they can be inserted at the top
+     * @param statements
+     * @param superStatements
+     * @return
+     */
     private NodeList<Statement> removeSuperCallsAndAddToList(NodeList<Statement> statements, NodeList<Statement> superStatements) {
-
         if(statements.size() > 0 && statements.get(0).getClass().getSimpleName().equals("ExplicitConstructorInvocationStmt")){
             superStatements.add(statements.get(0));
             statements.remove(0);
@@ -136,11 +146,6 @@ public class StatementReplacer {
 
             declarationStatements.add(new VariableDeclarationExpr(tmp));
 
-            /*declarationStatements.add(getObjectDeclaration(declarator));
-
-            declarationStatements.add(new AssignExpr(new NameExpr(declarator.getName().toString()), new NullLiteralExpr(),
-                    AssignExpr.Operator.ASSIGN));*/
-
             try{
                 Expression expression = declarator.getInitializer().get();
                 AssignExpr assignExpr = new AssignExpr(new NameExpr(declarator.getName().toString()), expression,
@@ -149,7 +154,6 @@ public class StatementReplacer {
 
             }catch(NoSuchElementException e){
             }
-
         });
 
         if(releventChildren.size() == 0){
@@ -159,6 +163,11 @@ public class StatementReplacer {
         return assignments;
     }
 
+    /**
+     * Turns primatives to objects
+     * @param name
+     * @return
+     */
     private String getObjectDeclarationName(String name) {
 
         if(name.equals("boolean")){
@@ -193,6 +202,11 @@ public class StatementReplacer {
         return name;
     }
 
+    /**
+     * Turns primatives to objects
+     * @param declarator
+     * @return
+     */
     private Expression getObjectDeclaration(VariableDeclarator declarator) {
         String name = declarator.getType().toString();
 
@@ -273,16 +287,24 @@ public class StatementReplacer {
         return lbl;
     }
 
+    /**
+     * Generates case statements given a statement
+     * @param stmt
+     * @param index
+     * @param declarationStatements
+     * @param superStatements
+     * @param node
+     * @param max
+     * @param switchName
+     * @return
+     */
     private SwitchEntryStmt generateCaseStatement(Statement stmt, Integer index, List<Expression> declarationStatements,
                                                   NodeList<Statement> superStatements,
                                                      Node
             node, int max, String switchName) {
         NodeList<Statement> statements = new NodeList<Statement>();
 
-
-
         statements.addAll(removeSuperCallsAndAddToList(removeDeclarationAndAddToList(stmt, declarationStatements), superStatements));
-
 
         int nextSwVar = _nextSwitchGenerator.getRandomInteger();
 
@@ -310,11 +332,17 @@ public class StatementReplacer {
         return switchEntryStmt;
     }
 
-
+    /**
+     * Gets the variable name
+     * @return
+     */
     public String getVariableName() {
         return _variableName;
     }
 
+    /**
+     * Resets the variable name
+     */
     public void resetName() {
         _variableName = _nameGenerator.generateDistinct();
     }

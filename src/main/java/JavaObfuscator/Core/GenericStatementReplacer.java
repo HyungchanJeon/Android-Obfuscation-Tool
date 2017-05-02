@@ -39,7 +39,7 @@ public class GenericStatementReplacer implements IFileModifier {
 
     /**
      * This method changes any statements to switches:
-     }
+     *
      * @param node
      */
     private void flatten(Node node) {

@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
+ *
+ *
  * Created by Jack Barker on 5/04/2017.
  */
 public class RenameVariables implements IFileModifier {
@@ -25,12 +27,24 @@ public class RenameVariables implements IFileModifier {
     private INameGenerator _nameGenerator;
     private SymbolSolver _symbolSolver;
 
+    /**
+     * Sets symbol solver instance and name generator instance for renaming variables
+     *
+     * @param nameGenerator Randomly generates unique names
+     * @param combinedTypeSolver Combines type solvers from symbol solver
+     * @param symbolSolver Solves symbols from nodes
+     */
     public RenameVariables(INameGenerator nameGenerator, CombinedTypeSolver combinedTypeSolver, SymbolSolver symbolSolver){
         _symbolSolver = symbolSolver;
         _combinedTypeSolver = combinedTypeSolver;
         _nameGenerator = nameGenerator;
     }
 
+    /**
+     * Find all varibles that need renaming, then recursively search the java AST and rename the variables
+     *
+     * @param file File containing java source code to rename variables in
+     */
     @Override
     public void applyChanges(IObfuscatedFile file) {
         ClassOrInterfaceModifier modifier = new ClassOrInterfaceModifier(_nameGenerator);
@@ -41,11 +55,24 @@ public class RenameVariables implements IFileModifier {
         modifier.replace();
     }
 
+    /**
+     * Recursively rename all variables in the AST
+     *
+     * @param n Node to traverse recursively
+     * @param file File containing java source code to rename variables in
+     * @param nodesToReplace List of nodes that contain variables that need renaming
+     */
     private void recurseAllNodes(Node n, IObfuscatedFile file, List<Node> nodesToReplace){
         populateNodesToReplace(n, nodesToReplace);
         n.getChildNodes().stream().forEach(node -> recurseAllNodes(node, file, nodesToReplace));
     }
 
+    /**
+     * Finds the variables that need to be renamed.
+     *
+     * @param n Node to traverse recursively
+     * @param nodesToReplace List of nodes that contain variables to rename
+     */
     private void populateNodesToReplace(Node n, List<Node> nodesToReplace){
         Class c = n.getClass();
         if(c.getSimpleName().equals("NameExpr")){
@@ -80,6 +107,12 @@ public class RenameVariables implements IFileModifier {
             nodesToReplace.add(n);
         }
     }
+
+    /**
+     * Recursively rename all variable names used in expressions to new random names sourced from the name generator
+     *
+     * @param n Node to traverse recursively
+     */
     private void replaceVariableUsages(Node n){
 
         Class c = n.getClass();

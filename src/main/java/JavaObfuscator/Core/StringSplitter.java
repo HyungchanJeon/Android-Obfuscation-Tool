@@ -28,9 +28,20 @@ public class StringSplitter implements IFileModifier {
 
     INameGenerator _nameGenerator;
 
+    /**
+     * Sets name generator instance for renaming variables
+     *
+     * @param nameGenerator Randomly generates unique names
+     */
     public StringSplitter(INameGenerator nameGenerator){
         _nameGenerator = nameGenerator;
     }
+
+    /**
+     * Find all varibles that need renaming, then recursively search the java AST and rename the variables
+     *
+     * @param file File containing java source code to rename variables in
+     */
     @Override
     public void applyChanges(IObfuscatedFile file) {
         List<Node> stringNodes = new ArrayList<>();
@@ -39,6 +50,11 @@ public class StringSplitter implements IFileModifier {
         replaceStrings(stringNodes);
     }
 
+    /**
+     * Iterate through list of strings that need replacing and generates concatenation expressions
+     *
+     * @param stringNodes List of strings to be replaced
+     */
     private void replaceStrings(List<Node> stringNodes) {
         stringNodes.forEach(node -> {
             Class c = node.getClass();
@@ -152,11 +168,24 @@ public class StringSplitter implements IFileModifier {
         });
     }
 
+    /**
+     * Recursively rename all variables in the AST
+     *
+     * @param n Node to traverse recursively
+     * @param file File containing java source code to rename variables in
+     * @param stringNodes List of nodes that contain variables that need splitting
+     */
     private void recurseAllNodes(Node n, IObfuscatedFile file, List<Node> stringNodes){
         populateNodesToReplace(n, stringNodes);
         n.getChildNodes().stream().forEach(node -> recurseAllNodes(node, file, stringNodes));
     }
 
+    /**
+     * Finds the strings that need to be split.
+     *
+     * @param n Node to traverse recursively
+     * @param stringNodes List of strings that need to be split
+     */
     private void populateNodesToReplace(Node n, List<Node> stringNodes){
         Class c = n.getClass();
         if(c.getSimpleName().equals("StringLiteralExpr")){

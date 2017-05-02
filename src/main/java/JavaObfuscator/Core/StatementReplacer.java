@@ -34,7 +34,6 @@ public class StatementReplacer {
         _variableName = nameGenerator.generateDistinct();
     }
 
-
     public BinaryExpr generateWhileCondition(){
 
         NodeList<Expression> args = new NodeList<>();

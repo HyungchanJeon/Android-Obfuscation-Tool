@@ -61,7 +61,6 @@ public class Main {
                 nameGenerator,
                 symbolSolver,
                 new RenameTypes(nameGenerator),
-                new RenameMethods(nameGenerator, symbolSolver),
                 new RenameVariables(nameGenerator, combinedTypeSolver, symbolSolver),
                 new MethodInliner(nameGenerator),
                 new GenericStatementReplacer(nameGenerator, new StatementGenerator()),

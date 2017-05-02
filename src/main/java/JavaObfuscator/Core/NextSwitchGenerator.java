@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Random;
 
 /**
+ * Generates a random number
+ *
  * Created by Jack Barker on 30/04/2017.
  */
 public class NextSwitchGenerator {
@@ -13,6 +15,11 @@ public class NextSwitchGenerator {
     int min =0;
     int max = Integer.MAX_VALUE - 1;
 
+    /**
+     * Generates a random integer that is not already in use
+     *
+     * @return Random integer
+     */
     public Integer getRandomInteger(){
         boolean found = false;
         Integer next = 0;
@@ -28,6 +35,9 @@ public class NextSwitchGenerator {
         return next;
     }
 
+    /**
+     * Reset list of integers already in use
+     */
     public void reset() {
         _inUse = new ArrayList<>();
         _inUse = new ArrayList<>();

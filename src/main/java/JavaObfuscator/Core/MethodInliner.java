@@ -23,6 +23,8 @@ import java.util.List;
 
 /**
  * Created by Lenovo on 4/29/2017.
+ *
+ * This class inlines the methods of a class
  */
 public class MethodInliner implements IFileModifier {
     INameGenerator _nameGenerator;
@@ -43,6 +45,9 @@ public class MethodInliner implements IFileModifier {
         inlineMethodCalls();
     }
 
+    /**
+     * Go through all methods calls that call a private method and inline the method contents.
+     */
     private void inlineMethodCalls(){
 
         //Iterate through all method calls we found, and check if they can be inlined.
@@ -150,6 +155,14 @@ public class MethodInliner implements IFileModifier {
         }
     }
 
+    /**
+     * Replaces the return statements in the method body with variable assignments, and break statements to simulate method returns
+     *
+     * @param node Node to recursively travserse
+     * @param breakLabel Label used on out while loop
+     * @param returnVariableName Name of the variable the return value is assigned to
+     * @param returnStmts List of return statements found
+     */
     private void convertReturnStatements(Node node, String breakLabel, Expression returnVariableName, ArrayList<ReturnStmt> returnStmts){
 
         //Check if the node passed is a BlockStmt - if so we can check its statements.
@@ -179,6 +192,14 @@ public class MethodInliner implements IFileModifier {
         node.getChildNodes().stream().forEach(n -> convertReturnStatements(n, breakLabel, returnVariableName, returnStmts));
     }
 
+    /**
+     * Renames the variables in the method body that come from parameters, to the name they have when passed as arguments
+     * to the method call
+     *
+     * @param methodCall The expression where the method is called
+     * @param body A copy of the body of the method that is going to be inlined
+     * @return A list of literal assignments.
+     */
     private ArrayList<Statement> renameParamVariables(MethodCallExpr methodCall, BlockStmt body){
 
         HashMap<String, String> _scopedNameExpressions = new HashMap<String, String>();
@@ -208,11 +229,26 @@ public class MethodInliner implements IFileModifier {
         return literalAssignments;
     }
 
+    /**
+     * Create an assignment expression between an argument and parameter expression
+     *
+     * @param argument Argument to be assigned too
+     * @param param Parameter the expression targets
+     * @return Expression assigning the argument to the parameter
+     */
     private AssignExpr assignLiteralArgument(Expression argument, Parameter param) {
         return new AssignExpr(new VariableDeclarationExpr(param.getType(), param.getNameAsString()), argument,
                 AssignExpr.Operator.ASSIGN);
     }
 
+    /**
+     * Randomly rename all variables in the inlined method except for those that are passed as parameters
+     *
+     * @param n Node to recursively traverse
+     * @param _scopedNameExpressions Mapping of corresspondong argument names in method call to parameter names in method body
+     * @param paramNames List of parameter names in method declaration
+     * @param methodDecVariables List of variables used in the method declaration
+     */
     private void renameNamedVariablesRecursively(Node n, HashMap<String, String> _scopedNameExpressions, HashSet<String> paramNames, HashSet<String> methodDecVariables){
 
         Class c = n.getClass();
@@ -247,6 +283,12 @@ public class MethodInliner implements IFileModifier {
         n.getChildNodes().stream().forEach(node -> renameNamedVariablesRecursively(node, _scopedNameExpressions, paramNames, methodDecVariables));
     }
 
+    /**
+     * Recursively builds a map of variables that are declared and thus scoped locally in the method body
+     *
+     * @param n Node to traverse recursively
+     * @param methodDecVariables Map of variables names that are scoped to the method
+     */
     private void getLocallyScopedVariables(Node n, HashSet<String> methodDecVariables){
 
         Class c = n.getClass();
@@ -257,6 +299,11 @@ public class MethodInliner implements IFileModifier {
         n.getChildNodes().stream().forEach(node -> getLocallyScopedVariables(node, methodDecVariables));
     }
 
+    /**
+     * Build a mapping of method calls to method declarations
+     *
+     * @param n Node to traverse recursively
+     */
     private void findPrivateMethods(Node n){
         Class c = n.getClass();
 

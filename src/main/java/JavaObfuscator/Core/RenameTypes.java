@@ -21,15 +21,31 @@ import java.util.stream.Stream;
 public class RenameTypes implements IFileModifier {
     INameGenerator _nameGenerator;
 
+    /**
+     * Sets name generator instance for renaming variables
+     *
+     * @param nameGenerator Randomly generates unique names
+     */
     public RenameTypes(INameGenerator nameGenerator){
         _nameGenerator = nameGenerator;
     }
 
+    /**
+     * Find all varibles that need renaming, then recursively search the java AST and rename the variables
+     *
+     * @param file File containing java source code to rename variables in
+     */
     @Override
     public void applyChanges(IObfuscatedFile file) {
         recurseAllNodes(file.getCompilationUnit(), file);
     }
 
+    /**
+     * Recursively rename all variables in the AST
+     *
+     * @param n Node to traverse recursively
+     * @param file File containing java source code to rename variables in
+     */
     private void recurseAllNodes(Node n, IObfuscatedFile file){
         replaceClassDefinitions(n, file);
         replaceClassOrInterfaces(n);
@@ -41,6 +57,11 @@ public class RenameTypes implements IFileModifier {
         n.getChildNodes().stream().forEach(node -> recurseAllNodes(node, file));
     }
 
+    /**
+     * Replace class types used in name expressions
+     *
+     * @param n Node to traverse recursively
+     */
     private void replaceNameExpressions(Node n) {
         Class c = n.getClass();
         if(c.getSimpleName().equals("NameExpr")){
@@ -50,6 +71,11 @@ public class RenameTypes implements IFileModifier {
         }
     }
 
+    /**
+     * Replace class types used in contructors
+     *
+     * @param n Node to traverse recursively
+     */
     private void replaceConstructors(Node n) {
         Class c = n.getClass();
         if(c.getSimpleName().equals("ConstructorDeclaration")){
@@ -59,6 +85,11 @@ public class RenameTypes implements IFileModifier {
         }
     }
 
+    /**
+     * Replace class types used as arguments
+     *
+     * @param n Node to traverse recursively
+     */
     private void replaceTypeArguments(Node n) {
         Class c = n.getClass();
         if(c.getSimpleName().equals("FieldDeclaration")){
@@ -76,6 +107,11 @@ public class RenameTypes implements IFileModifier {
         }
     }
 
+    /**
+     * Replace class types used in variable declarations
+     *
+     * @param n Node to traverse recursively
+     */
     private void replaceVariableDeclarations(Node n) {
         Class c = n.getClass();
         if(c.getSimpleName().equals("VariableDeclarator")){
@@ -94,6 +130,11 @@ public class RenameTypes implements IFileModifier {
         }
     }
 
+    /**
+     * Replace class types used in method declarations
+     *
+     * @param n Node to traverse recursively
+     */
     private void replaceMethodDeclarations(Node n) {
         Class c = n.getClass();
         if(c.getSimpleName().equals("MethodDeclaration")){
@@ -104,6 +145,11 @@ public class RenameTypes implements IFileModifier {
         }
     }
 
+    /**
+     * Replace class types used in class and interface types
+     *
+     * @param n Node to traverse recursively
+     */
     private void replaceClassOrInterfaces(Node n) {
         Class c = n.getClass();
         if(c.getSimpleName().equals("ClassOrInterfaceType")){
@@ -114,6 +160,11 @@ public class RenameTypes implements IFileModifier {
         }
     }
 
+    /**
+     * Replace class types used in class definitions
+     *
+     * @param n Node to traverse recursively
+     */
     private void replaceClassDefinitions(Node n, IObfuscatedFile file) {
         Class c = n.getClass();
         if(c.getSimpleName().equals("ClassOrInterfaceDeclaration")){

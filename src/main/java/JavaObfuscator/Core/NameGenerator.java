@@ -22,6 +22,13 @@ public class NameGenerator implements INameGenerator {
         return name;
     }
 
+    /**
+     * Renames a class name, either creating a new random value or if the sting has already been renamed,
+     * retrieving the renamed value
+     *
+     * @param oldName String to be renamed
+     * @return New unique random string
+     */
     public String getClassName(String oldName){
         if (!_originalClassList.contains(oldName)) {
             return oldName;
@@ -45,7 +52,14 @@ public class NameGenerator implements INameGenerator {
     public void setClassNames(List<String> classNames) {
         _originalClassList = classNames;
     }
-    
+
+    /**
+     * Renames a method name, either creating a new random value or if the sting has already been renamed,
+     * retrieving the renamed value
+     *
+     * @param oldName String to be renamed
+     * @return New unique random string
+     */
     public String getMethodName(String oldName){
 
         if(_classNames.containsKey(oldName)){

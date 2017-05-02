@@ -8,6 +8,7 @@ import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.type.Type;
+import javassist.expr.MethodCall;
 
 import javax.swing.plaf.nimbus.State;
 import java.lang.reflect.Array;
@@ -35,8 +36,12 @@ public class StatementReplacer {
 
 
     public BinaryExpr generateWhileCondition(){
-        BinaryExpr condition = new BinaryExpr(new NameExpr(_variableName), new UnaryExpr(new IntegerLiteralExpr("1"), UnaryExpr.Operator
-                .MINUS), BinaryExpr
+
+        NodeList<Expression> args = new NodeList<>();
+        args.add(new StringLiteralExpr("-1"));
+        MethodCallExpr mce = new MethodCallExpr(new NameExpr(_variableName), new SimpleName("equals"), args);
+
+        BinaryExpr condition = new BinaryExpr(new BooleanLiteralExpr(true), mce, BinaryExpr
                 .Operator.NOT_EQUALS);
 
         return condition;
@@ -56,7 +61,7 @@ public class StatementReplacer {
         NodeList<Statement> returnStatement = new NodeList<>();
         NodeList<Statement> superStatements = new NodeList<>();
 
-        ExpressionStmt swVarChange = new ExpressionStmt(new AssignExpr(new NameExpr(_variableName), new IntegerLiteralExpr(_nextSwitchInt
+        ExpressionStmt swVarChange = new ExpressionStmt(new AssignExpr(new NameExpr(_variableName), new StringLiteralExpr(_nextSwitchInt
                 + ""),
                 AssignExpr.Operator.ASSIGN));
 
@@ -76,7 +81,8 @@ public class StatementReplacer {
             block.addAndGetStatement(n);
         }
 
-        ExpressionStmt swVarDeclaration = new ExpressionStmt(new VariableDeclarationExpr(PrimitiveType.intType(), _variableName));
+        ExpressionStmt swVarDeclaration = new ExpressionStmt(new VariableDeclarationExpr(new ClassOrInterfaceType("String"),
+                _variableName));
 
 
 
@@ -121,10 +127,20 @@ public class StatementReplacer {
 
         releventChildren.forEach(child -> {
             VariableDeclarator declarator = (VariableDeclarator) child.getChildNodes().get(0);
-            declarationStatements.add(getObjectDeclaration(declarator));
+
+            VariableDeclarator tmp = new VariableDeclarator(new ClassOrInterfaceType(getObjectDeclarationName(declarator.getType().toString()
+            )), (declarator
+                    .getName()
+                    .toString
+                    ()),
+                    new NullLiteralExpr());
+
+            declarationStatements.add(new VariableDeclarationExpr(tmp));
+
+            /*declarationStatements.add(getObjectDeclaration(declarator));
 
             declarationStatements.add(new AssignExpr(new NameExpr(declarator.getName().toString()), new NullLiteralExpr(),
-                    AssignExpr.Operator.ASSIGN));
+                    AssignExpr.Operator.ASSIGN));*/
 
             try{
                 Expression expression = declarator.getInitializer().get();
@@ -142,6 +158,40 @@ public class StatementReplacer {
         }
 
         return assignments;
+    }
+
+    private String getObjectDeclarationName(String name) {
+
+        if(name.equals("boolean")){
+            name =("Boolean");
+        }
+
+        if(name.equals("byte")){
+            name = ("Byte");
+        }
+
+        if(name.equals("char")){
+            name = ("Character");
+        }
+
+        if(name.equals("short")){
+            name = ("Short");
+        }
+
+        if(name.equals("int")){
+            name = ("Integer");
+        }
+
+        if(name.equals("long")){
+            name = ("Long");
+        }
+
+        if(name.equals("double")){
+            name = ("Double");
+        }
+
+
+        return name;
     }
 
     private Expression getObjectDeclaration(VariableDeclarator declarator) {
@@ -241,7 +291,7 @@ public class StatementReplacer {
             nextSwVar = -1;
         }
 
-        ExpressionStmt swVarChange = new ExpressionStmt(new AssignExpr(new NameExpr(_variableName), new IntegerLiteralExpr(nextSwVar + ""),
+        ExpressionStmt swVarChange = new ExpressionStmt(new AssignExpr(new NameExpr(_variableName), new StringLiteralExpr(nextSwVar + ""),
                 AssignExpr.Operator.ASSIGN));
 
         if(!statements.stream().anyMatch(st -> st.getClass().getSimpleName().equals("ReturnStmt") || st.getClass().getSimpleName().equals
@@ -254,7 +304,7 @@ public class StatementReplacer {
 
         bs.add(new BlockStmt(statements));
 
-        SwitchEntryStmt switchEntryStmt = new SwitchEntryStmt(new IntegerLiteralExpr(_nextSwitchInt.toString()), bs);
+        SwitchEntryStmt switchEntryStmt = new SwitchEntryStmt(new StringLiteralExpr(_nextSwitchInt.toString()), bs);
 
         _nextSwitchInt = nextSwVar;
 

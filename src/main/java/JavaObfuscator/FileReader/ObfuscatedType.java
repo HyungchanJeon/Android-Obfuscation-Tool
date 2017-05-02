@@ -53,7 +53,7 @@ public class ObfuscatedType implements IObfuscatedFile {
             e.printStackTrace();
         }
 
-        _baseFile.delete();
+        //_baseFile.delete();
 
         try(  PrintWriter out = new PrintWriter(_filePath + "")  ){
             out.println(  _compilationUnit.toString() );

@@ -11,6 +11,7 @@ import com.github.javaparser.ast.stmt.SwitchEntryStmt;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.symbolsolver.model.declarations.ValueDeclaration;
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
+import com.sun.org.apache.xpath.internal.operations.Variable;
 import jdk.nashorn.internal.ir.Block;
 import jdk.nashorn.internal.ir.ExpressionStatement;
 import jdk.nashorn.internal.ir.Statement;
@@ -69,27 +70,34 @@ public class StringSplitter implements IFileModifier {
                     List<ExpressionStmt> builders = new ArrayList<>();
                     String string = stringLiteral.getValue();
                     String finalStringName = _nameGenerator.generateDistinct();
-                    ExpressionStmt baseString = new ExpressionStmt(new VariableDeclarationExpr(new ClassOrInterfaceType("String"),
-                            finalStringName));
+
+
+                    VariableDeclarator dc = new VariableDeclarator(new ClassOrInterfaceType("String"), finalStringName, new StringLiteralExpr
+                            (""));
+
+
+                    ExpressionStmt baseString = new ExpressionStmt(new VariableDeclarationExpr(dc));
+
+                    //new VariableDeclarationExpr()
+
                     letters.add(baseString);
 
-                    ExpressionStmt baseStringAssign = new ExpressionStmt(new AssignExpr(new NameExpr(finalStringName), new StringLiteralExpr
+                    /*ExpressionStmt baseStringAssign = new ExpressionStmt(new AssignExpr(new NameExpr(finalStringName), new
+                            StringLiteralExpr
                             (""), AssignExpr
-                            .Operator.ASSIGN));
+                            .Operator.ASSIGN));*/
 
-                    letters.add(baseStringAssign);
+                    //letters.add(baseStringAssign);
 
                     for (Character ch : string.toCharArray()) {
                         String variableName = _nameGenerator.generateDistinct();
-                        ExpressionStmt tmp = new ExpressionStmt(new VariableDeclarationExpr(new ClassOrInterfaceType("String"),
-                                variableName));
-                        letters.add(tmp);
 
-                        ExpressionStmt assign = new ExpressionStmt(new AssignExpr(new NameExpr(variableName), new StringLiteralExpr
-                                (ch + ""), AssignExpr
-                                .Operator.ASSIGN));
 
-                        letters.add(assign);
+                        VariableDeclarator tmp = new VariableDeclarator(new ClassOrInterfaceType("String"), (variableName),
+                                new StringLiteralExpr
+                                (ch + ""));
+
+                        letters.add(new ExpressionStmt(new VariableDeclarationExpr(tmp)));
 
                         ExpressionStmt builderTmp = new ExpressionStmt(new AssignExpr(new NameExpr(finalStringName), new NameExpr
                                 (variableName), AssignExpr.Operator.PLUS));
@@ -152,9 +160,12 @@ public class StringSplitter implements IFileModifier {
     private void populateNodesToReplace(Node n, List<Node> stringNodes){
         Class c = n.getClass();
         if(c.getSimpleName().equals("StringLiteralExpr")){
-            StringLiteralExpr stringLiteral = (StringLiteralExpr) (n);
-            stringNodes.add(stringLiteral);
+            try{
+                if(!n.getParentNode().get().getClass().getSimpleName().equals("SwitchEntryStmt")){
+                    StringLiteralExpr stringLiteral = (StringLiteralExpr) (n);
+                    stringNodes.add(stringLiteral);
+                }
+            }catch(Exception e){}
         }
-
     }
 }

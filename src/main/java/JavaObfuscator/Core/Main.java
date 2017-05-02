@@ -19,7 +19,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
+
+    public static void runMethod(int module) throws IOException{
         IFileRetriever fileRetriever = new FileRetriever();
         ISourceReader reader = new SourceReader(fileRetriever);
         List<IObfuscatedFile> obfuscatedFiles = reader.ParseSourceDirectory(
@@ -67,42 +68,38 @@ public class Main {
                 new StringSplitter(nameGenerator));
 
 
-        //obfuscatedFiles = obfuscator.randomiseMethodNames(obfuscatedFiles);
-        //obfuscatedFiles = obfuscator.randomiseVariableNames(obfuscatedFiles);
-        //obfuscatedFiles = obfuscator.randomiseClassNames(obfuscatedFiles);
-        //obfuscator.inlineMethods(obfuscatedFiles);
-        //obfuscatedFiles = obfuscator.flattenEntireProject(obfuscatedFiles);
-        obfuscatedFiles = obfuscator.splitStrings(obfuscatedFiles);
+        if(module == 1){
+            obfuscatedFiles = obfuscator.randomiseMethodNames(obfuscatedFiles);
+        }
+        if(module == 2){
+            obfuscatedFiles = obfuscator.randomiseVariableNames(obfuscatedFiles);
+        }
+        if(module == 3){
+            obfuscatedFiles = obfuscator.randomiseClassNames(obfuscatedFiles);
+        }
+        if(module == 4){
+            obfuscatedFiles = obfuscator.splitStrings(obfuscatedFiles);
+        }
+        if(module == 5){
+            obfuscator.inlineMethods(obfuscatedFiles);
+        }
+        if(module == 6){
+            obfuscatedFiles = obfuscator.flattenEntireProject(obfuscatedFiles);
+        }
 
         modifier.replace();
 
         //Modify xml files
-
-        FileRetriever fr = new FileRetriever();
-        List<File> files = fr.getFiles(
-                "C:\\Users\\Jack Barker\\Documents\\702A11"
-                //"C:\\tmp"
-                , ".xml");
-
-        files.forEach(f -> {
-            try {
-                String contents = new String(Files.readAllBytes(Paths.get(f.getAbsolutePath().toString())));
-                for(String name : classNames){
-                    contents = contents.replaceAll(name, nameGenerator.getClassName(name));
-                }
-
-                FileWriter writer = new FileWriter(f, false);
-                writer.write(contents);
-                writer.close();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-
         for(IObfuscatedFile obfuscatedFile : obfuscatedFiles){
             obfuscatedFile.applyChanges();
         }
+    }
+    public static void main(String[] args) throws IOException {
+        runMethod(2);
+        runMethod(3);
+        runMethod(4);
+        runMethod(5);
+        runMethod(6);
     }
 }
 

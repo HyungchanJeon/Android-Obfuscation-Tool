@@ -38,37 +38,7 @@ public class GenericStatementReplacer implements IFileModifier {
     }
 
     /**
-     * This method changes any whiles loops to switches:
-     *
-     * Eg:
-     *  int c = 10;
-     while(c != 0) {
-     System.out.println(c);
-     c--;
-     }
-
-     is converted to:
-
-     int c = 10;
-     int swVar = 1;
-     while (swVar != -1) {
-     swVar = 1;
-     while (swVar != -1 && swVar != 0)
-     switch(swVar) {
-     case 1:
-     if (c != 0) {
-     System.out.println(c);
-     swVar = 2;
-     break  ;
-     } else {
-     swVar = -1;
-     break  ;
-     }
-     case 2:
-     c--;
-     swVar = 0;
-     break  ;
-     }
+     * This method changes any statements to switches:
      }
      * @param node
      */

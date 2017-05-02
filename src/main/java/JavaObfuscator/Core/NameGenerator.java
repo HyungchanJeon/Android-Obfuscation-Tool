@@ -93,7 +93,7 @@ public class NameGenerator implements INameGenerator {
         String newName = "";
 
         while(!nameFound) {
-            int length = 4 + random.nextInt(10);
+            int length = 4 + random.nextInt(20);
             StringBuffer sb = new StringBuffer();
             for (int i = 0; i < length; i++) {
                 int letterIndex = random.nextInt(26);

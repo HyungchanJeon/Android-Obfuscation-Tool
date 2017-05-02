@@ -124,7 +124,6 @@ public class MethodInliner implements IFileModifier {
                     //If the method callNode is a variable declaration as well, declare the same variable before the method inlining (outside the while-wrapper)
                     if (methodCallExpression.getClass().getSimpleName().equals("VariableDeclarationExpr")) {
 
-                        System.out.println("it is " + methodCallExpression);
                         VariableDeclarationExpr variableDec = (VariableDeclarationExpr) methodCallExpression;
                         finalBlock.addStatement(0, new AssignExpr(new VariableDeclarationExpr(variableDec.getVariable(0).getType(), variableDec.getVariable(0).getNameAsString()),new NullLiteralExpr(), AssignExpr.Operator.ASSIGN));
                     }
@@ -140,8 +139,7 @@ public class MethodInliner implements IFileModifier {
                 WhileStmt whileWrapper = new WhileStmt(condition, new BlockStmt(methodBlockStatements));
                 LabeledStmt whileWrapperWithLabel = new LabeledStmt(LABEL, whileWrapper);
 
-                //Create final block to house method statements
-
+                //Populate final block with method statements
                 finalBlock.addStatement(whileWrapperWithLabel);
 
                 //Remove old method call and replace it with while-wrapped method body.

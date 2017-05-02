@@ -60,17 +60,21 @@ public class Main {
                 new RenameMethods(nameGenerator, symbolSolver),
                 new RenameVariables(nameGenerator, combinedTypeSolver, symbolSolver),
                 new MethodInliner(nameGenerator),
-                new GenericStatementReplacer(nameGenerator, new StatementGenerator()));
+                new GenericStatementReplacer(nameGenerator, new StatementGenerator()),
+                new StringSplitter(nameGenerator),
+                new CommentRemover());
 
 
+        obfuscatedFiles = obfuscator.removeComments(obfuscatedFiles);
         //obfuscatedFiles = obfuscator.randomiseMethodNames(obfuscatedFiles);
 
         //obfuscatedFiles = obfuscator.randomiseVariableNames(obfuscatedFiles);
         //obfuscatedFiles = obfuscator.randomiseClassNames(obfuscatedFiles);
 
-        obfuscatedFiles = obfuscator.inlineMethods(obfuscatedFiles);
-        obfuscatedFiles = obfuscator.flattenEntireProject(obfuscatedFiles);
-
+        //obfuscatedFiles = obfuscator.inlineMethods(obfuscatedFiles);
+        //obfuscatedFiles = obfuscator.flattenEntireProject(obfuscatedFiles);
+        //obfuscatedFiles = obfuscator.flattenEntireProject(obfuscatedFiles);
+        //obfuscatedFiles = obfuscator.splitStrings(obfuscatedFiles);
         modifier.replace();
 
         //Modify xml files

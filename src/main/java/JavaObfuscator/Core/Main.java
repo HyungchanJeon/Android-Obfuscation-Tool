@@ -65,9 +65,12 @@ public class Main {
                 new RenameVariables(nameGenerator, combinedTypeSolver, symbolSolver),
                 new MethodInliner(nameGenerator),
                 new GenericStatementReplacer(nameGenerator, new StatementGenerator()),
-                new StringSplitter(nameGenerator));
+                new StringSplitter(nameGenerator),
+                new CommentRemover());
 
-
+        if(module == 0){
+            obfuscatedFiles = obfuscator.removeComments(obfuscatedFiles);
+        }
         if(module == 1){
             obfuscatedFiles = obfuscator.randomiseMethodNames(obfuscatedFiles);
         }
@@ -75,7 +78,31 @@ public class Main {
             obfuscatedFiles = obfuscator.randomiseVariableNames(obfuscatedFiles);
         }
         if(module == 3){
+
             obfuscatedFiles = obfuscator.randomiseClassNames(obfuscatedFiles);
+
+            //Modify xml files
+
+            FileRetriever fr = new FileRetriever();
+            List<File> files = fr.getFiles(
+                    "C:\\Users\\Jack Barker\\Documents\\702A11\\app"
+                    , ".xml");
+
+            files.forEach(f -> {
+                try {
+                    String contents = new String(Files.readAllBytes(Paths.get(f.getAbsolutePath().toString())));
+                    for(String name : classNames){
+                        contents = contents.replaceAll(name, nameGenerator.getClassName(name));
+                    }
+
+                    FileWriter writer = new FileWriter(f, false);
+                    writer.write(contents);
+                    writer.close();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
         }
         if(module == 4){
             obfuscatedFiles = obfuscator.splitStrings(obfuscatedFiles);
@@ -95,10 +122,12 @@ public class Main {
         }
     }
     public static void main(String[] args) throws IOException {
+        runMethod(0);
         runMethod(2);
         runMethod(3);
-        runMethod(4);
         runMethod(5);
+        runMethod(6);
+        runMethod(4);
         runMethod(6);
     }
 }

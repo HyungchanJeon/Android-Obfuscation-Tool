@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Random;
 
 /**
+ * Name generator used for generating unique random strings
+ *
  * Created by Jack Barker on 5/04/2017.
  */
 public class NameGenerator implements INameGenerator {
@@ -85,6 +87,13 @@ public class NameGenerator implements INameGenerator {
         _methodNames.put(oldName, oldName);
     }
 
+    /**
+     * Renames a variable name, either creating a new random value or if the sting has already been renamed,
+     * retrieving the renamed value
+     *
+     * @param oldName String to be renamed
+     * @return New unique random string
+     */
     public String getVariableName(String oldName){
 
         if(oldName.equals("menu")){
@@ -101,6 +110,11 @@ public class NameGenerator implements INameGenerator {
         return newName;
     }
 
+    /**
+     * Generates a unique random string
+     *
+     * @return A random string
+     */
     private String generateName(){
         Random random = new Random();
         boolean nameFound = false;
